@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة زرار محمود الهارب</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            user-select: none;
+        }
+
+        #ui-panel {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 { margin: 0 0 10px 0; font-size: 24px; color: #f1c40f; }
+        .stats { font-size: 18px; margin: 5px 0; }
+
+        /* التحكم في الصوت */
+        .volume-control {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+        .volume-control input {
+            cursor: pointer;
+            accent-color: #2ecc71;
+        }
+
+        #start-btn {
+            padding: 12px 25px;
+            font-size: 18px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+            margin-top: 5px;
+        }
+        #start-btn:hover { background-color: #27ae60; }
+
+        /* الزرار المستهدف */
+        #game-btn {
+            position: absolute;
+            display: none;
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            border: 2px solid white;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.1s ease;
+            z-index: 5;
+        }
+
+        /* رسائل الفوز والخسارة */
+        #overlay-message {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        #overlay-message h2 { font-size: 40px; margin-bottom: 20px; }
+        #overlay-message button {
+            padding: 10px 25px;
+            font-size: 18px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- لوحة التحكم العلوية -->
+    <div id="ui-panel">
+        <h1>لعبة زرار محمود الهارب 🏃‍♂️</h1>
+        <div class="stats">المرحلة: <span id="level-display">1</span> / 50</div>
+        <div class="stats">الوقت المتبقي: <span id="timer-display">30</span> ثانية</div>
+        
+        <!-- خيار التحكم في الصوت -->
+        <div class="volume-control">
+            <label for="volume-slider">🎵 صوت الموسيقى:</label>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.3" oninput="changeVolume(this.value)">
+        </div>
+
+        <button id="start-btn" onclick="startGame()">إبدأ اللعبة 🎮</button>
+    </div>
+
+    <!-- زر اللعب (زرار محمود) -->
+    <button id="game-btn" onclick="winLevel()">إضغطني!</button>
+
+    <!-- شاشة الرسائل (فوز / خسارة) -->
+    <div id="overlay-message">
+        <h2 id="msg-text"></h2>
+        <button id="msg-btn">متابعة</button>
+    </div>
+
+    <!-- الموسيقى الخلفية -->
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        let level = 1;
+        const maxLevels = 50;
+        let timeLeft = 30;
+        let timerInterval;
+        let moveInterval;
+        
+        const gameBtn = document.getElementById('game-btn');
+        const startBtn = document.getElementById('start-btn');
+        const levelDisplay = document.getElementById('level-display');
+        const timerDisplay = document.getElementById('timer-display');
+        const overlay = document.getElementById('overlay-message');
+        const msgText = document.getElementById('msg-text');
+        const msgBtn = document.getElementById('msg-btn');
+        const bgMusic = document.getElementById('bg-music');
+        const volumeSlider = document.getElementById('volume-slider');
+
+        // ضبط الصوت المبدئي
+        bgMusic.volume = volumeSlider.value;
+
+        // دالة تغيير الصوت من الشريط
+        function changeVolume(val) {
+            bgMusic.volume = val;
+        }
+
+        // بدء اللعبة
+        function startGame() {
+            startBtn.style.display = 'none';
+            gameBtn.style.display = 'block';
+            resetTimer();
+            setupLevel();
+            
+            // تشغيل الموسيقى بالصوت المحدد
+            bgMusic.play().catch(e => console.log("المتصفح يتطلب تفاعل لتشغيل الصوت"));
+        }
+
+        // إعدادات المرحلة
+        function setupLevel() {
+            clearInterval(moveInterval);
+            
+            // الصعوبة تزيد مع المراحل (السرعة تزيد والحجم يصغر)
+            let speed = Math.max(200, 1100 - (level * 18)); 
+            let scale = Math.max(0.6, 1.2 - (level * 0.012)); 
+            
+            gameBtn.style.transform = `scale(${scale})`;
+            moveButton();
+            moveInterval = setInterval(moveButton, speed);
+        }
+
+        // تحريك الزرار عشوائياً
+        function moveButton() {
+            const maxX = window.innerWidth - gameBtn.offsetWidth - 40;
+            const maxY = window.innerHeight - gameBtn.offsetHeight - 160; // زيادة الهامش بسبب شريط الصوت
+            
+            const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(180, Math.floor(Math.random() * maxY));
+            
+            gameBtn.style.left = randomX + 'px';
+            gameBtn.style.top = randomY + 'px';
+        }
+
+        // مؤقت الـ 30 ثانية
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 30;
+            timerDisplay.innerText = timeLeft;
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.innerText = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    gameOver();
+                }
+            }, 1000);
+        }
+
+        // الفوز بالمرحلة
+        function winLevel() {
+            clearInterval(moveInterval);
+            clearInterval(timerInterval);
+            gameBtn.style.display = 'none';
+
+            if (level >= maxLevels) {
+                showOverlay("🎉 مبروك! لقد تختمت الـ 50 مرحلة وهزمت زرار محمود! 🎉", "إعادة اللعب من جديد", true);
+            } else {
+                showOverlay(`مبروك كسبت المرحلة ${level}! 👋`, "الانتقال للمرحلة التالية", false);
+            }
+        }
+
+        // الخسارة
+        function gameOver() {
+            clearInterval(moveInterval);
+            clearInterval(timerInterval);
+            gameBtn.style.display = 'none';
+            
+            showOverlay("حاول مره اخري ياغبي 🤭", "إعادة المحاولة", true);
+        }
+
+        // إظهار الرسائل المنبثقة
+        function showOverlay(text, buttonText, isReset) {
+            msgText.innerText = text;
+            msgBtn.innerText = buttonText;
+            overlay.style.display = 'flex';
+            
+            msgBtn.onclick = function() {
+                overlay.style.display = 'none';
+                if (isReset) {
+                    level = 1;
+                    levelDisplay.innerText = level;
+                    startGame();
+                } else {
+                    level++;
+                    levelDisplay.innerText = level;
+                    gameBtn.style.display = 'block';
+                    resetTimer();
+                    setupLevel();
+                }
+            };
+        }
+    </script>
+</body>
+</html>
