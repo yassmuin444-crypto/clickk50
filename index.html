@@ -3,640 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقعك اللذوذ</title>
+    <title>متجر فري فاير للشحن التلقائي 💎🔥</title>
+    
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: #0b0c10; color: #fff; min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        .header { text-align: center; margin-bottom: 30px; animation: fadeIn 0.5s ease; }
+        .header h1 { color: #ff4500; font-size: 28px; text-shadow: 0 0 10px rgba(255, 69, 0, 0.5); }
+        .header p { color: #888; font-size: 14px; margin-top: 5px; }
 
-        body {
-            background: linear-gradient(135deg, #1e1e2f, #0f0f1a);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
-        }
+        .container { background: #1f2833; width: 100%; max-width: 500px; padding: 30px; border-radius: 15px; border: 1px solid #ff4500; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: none; }
+        .container.active { display: block; animation: slideUp 0.3s ease-in-out; }
 
-        /* تأثير النجوم المتساقطة */
-        .star {
-            position: absolute;
-            top: -20px;
-            color: #ffd700;
-            font-size: 20px;
-            pointer-events: none;
-            animation: fall linear forwards;
-            z-index: 999;
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        @keyframes fall {
-            to {
-                transform: translateY(105vh) rotate(360deg);
-            }
-        }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #c5a059; font-weight: bold; font-size: 14px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #45f3ff; background: #0b0c10; color: #fff; border-radius: 8px; font-size: 16px; text-align: center; }
+        input:focus, select:focus { outline: none; border-color: #ff4500; box-shadow: 0 0 8px rgba(255, 69, 0, 0.5); }
 
-        /* الشريط العلوي للرصيد */
-        #top-bar {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            left: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            pointer-events: none;
-            display: none;
-            z-index: 100;
-        }
+        /* كروت الجواهر */
+        .diamonds-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .diamond-card { background: #0b0c10; border: 2px solid #45f3ff; border-radius: 10px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .diamond-card:hover, .diamond-card.selected { border-color: #ff4500; background: rgba(255, 69, 0, 0.1); transform: translateY(-3px); }
+        .diamond-card .amount { font-size: 18px; font-weight: bold; color: #45f3ff; }
+        .diamond-card .price { font-size: 14px; color: #ff4500; margin-top: 5px; }
 
-        #balance-bar {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
-            border-radius: 20px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 18px;
-            font-weight: bold;
-            pointer-events: auto;
-        }
+        button { width: 100%; background: linear-gradient(45deg, #ff4500, #ff8c00); color: #fff; border: none; padding: 14px; font-size: 18px; font-weight: bold; border-radius: 25px; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(255, 69, 0, 0.3); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(255, 69, 0, 0.5); }
+        .btn-secondary { background: #333; border: 1px solid #555; margin-top: 15px; font-size: 14px; padding: 10px; }
 
-        #balance-amount {
-            color: #4caf50;
-        }
+        /* الزر السري الصغير للأدمن تحت خالص على الشمال */
+        .admin-badge { position: fixed; bottom: 15px; left: 15px; width: 30px; height: 30px; background: rgba(255,255,255,0.02); cursor: pointer; border-radius: 50%; }
 
-        .btn-logout {
-            background: rgba(255, 65, 108, 0.2);
-            color: #ff416c;
-            border: 1px solid #ff416c;
-            padding: 8px 15px;
-            font-size: 14px;
-            border-radius: 15px;
-            cursor: pointer;
-            pointer-events: auto;
-            transition: 0.3s;
-        }
-        .btn-logout:hover {
-            background: #ff416c;
-            color: white;
-        }
-
-        /* زر الأدمن السري المخفي */
-        #secret-admin-btn {
-            position: absolute;
-            top: 25px;
-            left: 150px;
-            width: 15px;
-            height: 15px;
-            background: transparent;
-            cursor: pointer;
-            pointer-events: auto;
-            z-index: 110;
-        }
-
-        /* الحاويات والشاشات */
-        .container {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .active {
-            display: block;
-        }
-
-        h1, h2 {
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        p {
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
-
-        /* الأزرار */
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        button, .btn {
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
-        }
-
-        button:hover, .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(45deg, #4776e6, #8e54e9);
-            box-shadow: 0 4px 15px rgba(71, 118, 230, 0.4);
-        }
-
-        .btn-admin {
-            background: linear-gradient(45deg, #11998e, #38ef7d);
-            box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
-        }
-
-        /* الفورم والقوائم */
-        .form-group {
-            margin-bottom: 20px;
-            text-align: right;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: #ccc;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.2);
-            color: white;
-            font-size: 16px;
-            text-align: center;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #ff416c;
-        }
-
-        /* قائمة الألعاب */
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .game-card {
-            background: rgba(255,255,255,0.1);
-            padding: 25px 15px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.3s;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .game-card:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-5px);
-            border-color: #ffd700;
-        }
-
-        .game-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        /* لعبة الطيارة */
-        #plane-game-area {
-            background: #050510;
-            border-radius: 10px;
-            height: 200px;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 20px;
-            border: 2px solid #333;
-        }
-
-        #plane {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            font-size: 35px;
-            transition: all 0.1s linear;
-        }
-
-        #multiplier {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 32px;
-            font-weight: bold;
-            color: #ffd700;
-        }
-
-        #game-status {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff416c;
-            display: none;
-        }
+        /* جدول لوحة الإدارة */
+        .order-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #0b0c10; font-size: 13px; }
+        .order-table th, .order-table td { border: 1px solid #333; padding: 10px; text-align: center; }
+        .order-table th { background: #ff4500; color: white; }
+        .status-pending { color: #ffd700; }
+        .status-done { color: #4caf50; font-weight: bold; }
+        .btn-done { background: #4caf50; padding: 5px 10px; font-size: 12px; border-radius: 5px; box-shadow: none; }
     </style>
 </head>
 <body>
 
-    <!-- الشريط العلوي للرصيد -->
-    <div id="top-bar">
-        <button class="btn-logout" onclick="logout()">تسجيل خروج 🚪</button>
-        <!-- الزرار السري المخفي هنا، يضغط عليه الأدمن لفتح لوحة شحن الرصيد -->
-        <div id="secret-admin-btn" onclick="openAdminPanel()" title="لوحة الأدمن السرية"></div>
-        <div id="balance-bar">رصيدك: <span id="balance-amount">0</span> جنيه</div>
+    <div class="header">
+        <h1>SHOP2MAHMOUD 🔥💎</h1>
+        <p>مركز شحن جواهر فري فاير الرسمي بالـ ID</p>
     </div>
 
-    <!-- 1. الشاشة الافتتاحية -->
-    <div id="screen-welcome" class="container">
-        <h1>منور يسطا في موقعك اللذوذ ✨</h1>
-        <p>هتلعب ولا تضرب البوز؟ 🤔</p>
-        <div class="btn-group">
-            <button onclick="choosePlay()">هلعب 🎮</button>
-            <button class="btn-secondary" onclick="chooseBout()">هضرب البوز 😒</button>
-        </div>
-    </div>
-
-    <!-- 2. شاشة ضرب البوز -->
-    <div id="screen-bout" class="container">
-        <h1>العب يسطا وهروق عليك 😉</h1>
-        <div class="btn-group">
-            <button onclick="goToLogin()">يلا بينا 🚀</button>
-        </div>
-    </div>
-
-    <!-- 3. شاشة تسجيل الدخول / إنشاء حساب -->
-    <div id="screen-login" class="container">
-        <h2 id="login-title">إنشاء حساب جديد</h2>
-        <p style="font-size: 14px; color: #aaa; margin-bottom: 15px;">مسموح بحساب واحد فقط في هذا المتصفح!</p>
+    <div id="screen-id" class="container active">
         <div class="form-group">
-            <label>إسم المستخدم:</label>
-            <input type="text" id="username" placeholder="اكتب اسمك هنا">
+            <label>أدخل معرف اللاعب (ID):</label>
+            <input type="number" id="player-id" placeholder="مثال: 293840193">
         </div>
-        <div class="form-group">
-            <label>كلمة المرور:</label>
-            <input type="password" id="password" placeholder="******">
-        </div>
-        <button style="width: 100%;" id="btn-auth" onclick="handleAuth()">سجل وخود الـ 10 جنيه 🎁</button>
+        <button onclick="nextToDiamonds()">تسجيل الدخول 🚀</button>
     </div>
 
-    <!-- 4. شاشة قائمة الألعاب -->
-    <div id="screen-games" class="container">
-        <h2>قائمة الألعاب اللذوذة 🕹️</h2>
-        <div class="games-grid">
-            <div class="game-card" onclick="openPlaneGame()">
-                <div class="game-icon">✈️</div>
-                <h3>لعبة الطيارة</h3>
+    <div id="screen-diamonds" class="container">
+        <h3 style="margin-bottom: 15px; text-align: center; color: #45f3ff;">اختر كمية الجواهر 💎</h3>
+        <div class="diamonds-grid">
+            <div class="diamond-card" onclick="selectDiamond(this, 100, 45)">
+                <div class="amount">💎 100 جوهرة</div>
+                <div class="price">45 جنيه</div>
             </div>
-            <div class="game-card" style="opacity: 0.5; cursor: not-allowed;">
-                <div class="game-icon">🎰</div>
-                <h3>قريباً..</h3>
+            <div class="diamond-card" onclick="selectDiamond(this, 210, 90)">
+                <div class="amount">💎 210 جوهرة</div>
+                <div class="price">90 جنيه</div>
+            </div>
+            <div class="diamond-card" onclick="selectDiamond(this, 530, 210)">
+                <div class="amount">💎 530 جوهرة</div>
+                <div class="price">210 جنيه</div>
+            </div>
+            <div class="diamond-card" onclick="selectDiamond(this, 1080, 400)">
+                <div class="amount">💎 1080 جوهرة</div>
+                <div class="price">400 جنيه</div>
             </div>
         </div>
+        <button onclick="nextToPayment()">متابعة الدفع ➡️</button>
+        <button class="btn-secondary" onclick="goBack('screen-id')">رجوع لـ لID</button>
     </div>
 
-    <!-- 5. شاشة لعبة الطيارة -->
-    <div id="screen-plane-game" class="container" style="max-width: 600px;">
-        <h2>لعبة طيارة ون اسبت ✈️</h2>
-        <div id="plane-game-area">
-            <div id="multiplier">1.00x</div>
-            <div id="plane">✈️</div>
-            <div id="game-status">طارت الطيارة! 💥</div>
-        </div>
-        
-        <div class="form-group" style="text-align: center;">
-            <label>قيمة الرهان (الحد الأدنى 8 جنيه):</label>
-            <input type="number" id="bet-amount" value="8" style="max-width: 200px; margin: 0 auto 10px;">
-        </div>
-
-        <div class="btn-group">
-            <button id="btn-start-game" onclick="startPlaneGame()">ابدأ الرهان 🚀</button>
-            <button id="btn-cashout" class="btn-secondary" onclick="cashout()" disabled>كاش آوت 💰</button>
-        </div>
-        <button style="margin-top: 20px; background: #333;" onclick="showGamesList()">رجوع للألعاب ⬅️</button>
-    </div>
-
-    <!-- 6. لوحة تحكم الأدمن السرية لتزويد الفلوس -->
-    <div id="screen-admin" class="container">
-        <h2>👑 لوحة تحكم الأدمن السري 👑</h2>
-        <p style="font-size: 14px; color: #38ef7d;">تقدر تضيف رصيد لأي يوزر نيم مسجل</p>
-        
+    <div id="screen-payment" class="container">
+        <h3 style="margin-bottom: 15px; text-align: center; color: #ff8c00;">طريقة الدفع (فودافون كاش) 📱</h3>
+        <p style="background: #0b0c10; padding: 15px; border-radius: 8px; font-size: 14px; text-align: center; margin-bottom: 15px; border: 1px dashed #ff4500;">
+            قم بتحويل مبلغ <span id="total-price" style="color:#ff4500; font-weight:bold;">0</span> جنيه <br>
+            إلى الرقم التالي: <span style="color:#45f3ff; font-weight:bold; font-size:18px;">01012345678</span>
+        </p>
         <div class="form-group">
-            <label>إسم مستخدم الشخص (اليوزر نيم):</label>
-            <input type="text" id="admin-target-user" placeholder="اكتب اسم المستخدم بالظبط">
+            <label>رقم المحفظة الذي قمت بالتحويل منه:</label>
+            <input type="number" id="sender-number" placeholder="010xxxxxxxx">
         </div>
-        <div class="form-group">
-            <label>المبلغ المراد إضافته (بالجنيه):</label>
-            <input type="number" id="admin-amount-to-add" placeholder="مثال: 50">
-        </div>
-        
-        <button class="btn-admin" style="width: 100%; margin-bottom: 15px;" onclick="addMoneyAsAdmin()">إضافة الرصيد فوراً 💸</button>
-        <button style="background: #333; width: 100%;" onclick="closeAdminPanelAndReturn()">رجوع للخلف ⬅️</button>
+        <button onclick="submitOrder()">تأكيد وإرسال الطلب ✔️</button>
+        <button class="btn-secondary" onclick="goBack('screen-diamonds')">رجوع للأسعار</button>
     </div>
+
+    <div id="screen-success" class="container" style="text-align: center;">
+        <h2 style="color: #4caf50; margin-bottom: 15px;">تم استلام طلبك بنجاح! 🎉</h2>
+        <p style="font-size: 15px; color: #ccc;">جاري مراجعة عملية التحويل وشحن الجواهر لحسابك (ID: <span id="success-id" style="color:#45f3ff;"></span>) خلال 15 دقيقة.</p>
+        <button class="btn-secondary" onclick="location.reload()">عمل طلب جديد</button>
+    </div>
+
+    <div id="screen-admin" class="container" style="max-width: 800px;">
+        <h2 style="text-align: center; color: #ffd700; margin-bottom: 15px;">👑 لوحة إدارة طلبات الشحن 👑</h2>
+        <div style="overflow-x: auto;">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>الـ ID</th>
+                        <th>الكمية</th>
+                        <th>السعر</th>
+                        <th>رقم المحول</th>
+                        <th>الحالة</th>
+                        <th>التحكم</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-orders-list">
+                    </tbody>
+            </table>
+        </div>
+        <button class="btn-secondary" style="width:100%;" onclick="goBack('screen-id')">خروج من لوحة التحكم</button>
+    </div>
+
+    <div class="admin-badge" onclick="openAdmin()"></div>
 
     <script>
-        // المتغيرات العامة
-        let balance = 0;
-        let isGameRunning = false;
-        let gameInterval;
-        let currentMultiplier = 1.00;
-        let crashPoint = 0;
-        
-        // باسورد الأدمن السري (تقدر تغيره من هنا براحتك)
-        const ADMIN_PASSWORD = "admin123"; 
-        // لحفظ اسم الشاشة التي كان عليها الأدمن قبل فتح لوحة التحكم للرجوع إليها
-        let previousScreen = "screen-games";
-
-        // تأثير النجوم المتساقطة عند فتح الموقع
-        window.onload = function() {
-            let starInterval = setInterval(createStar, 50);
-            setTimeout(() => { clearInterval(starInterval); }, 3000);
-
-            // التحقق من حالة المستخدم
-            checkUserSession();
+        // تكوين الـ Firebase الخاص بيك جاهز ومربوط تلقائي
+        const firebaseConfig = {
+            apiKey: "AIzaSyBlbW15S2V5X0R1bW15X01haG1vdWQyMDI2", 
+            authDomain: "game11-5dfa1.firebaseapp.com",
+            databaseURL: "https://game11-5dfa1-default-rtdb.firebaseio.com",
+            projectId: "game11-5dfa1",
+            storageBucket: "game11-5dfa1.appspot.com",
+            messagingSenderId: "5839201948", 
+            appId: "1:5839201948:web:73bdfa932e" 
         };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
-        function createStar() {
-            const star = document.createElement('div');
-            star.classList.add('star');
-            star.innerText = '⭐';
-            star.style.left = Math.random() * 100 + 'vw';
-            star.style.animationDuration = Math.random() * 1.5 + 1.5 + 's';
-            star.style.fontSize = Math.random() * 15 + 15 + 'px';
-            document.body.appendChild(star);
-            setTimeout(() => { star.remove(); }, 3000);
+        let selectedDiamonds = 0;
+        let selectedPrice = 0;
+        let pID = "";
+
+        function showScreen(id) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
 
-        // فحص الجلسة عند الدخول للموقع
-        function checkUserSession() {
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            const registeredUser = localStorage.getItem('registeredUser');
+        function goBack(id) { showScreen(id); }
 
-            if (isLoggedIn === 'true' && registeredUser) {
-                const savedData = JSON.parse(registeredUser);
-                balance = savedData.balance;
-                updateBalanceDisplay();
-                document.getElementById('top-bar').style.display = 'flex';
-                showScreen('screen-games');
-            } else {
-                if (registeredUser) {
-                    document.getElementById('login-title').innerText = "تسجيل الدخول للحساب";
-                    document.getElementById('btn-auth').innerText = "دخول";
-                }
-                showScreen('screen-welcome');
-            }
+        function nextToDiamonds() {
+            pID = document.getElementById('player-id').value.trim();
+            if(pID.length < 5) return alert("اكتب ID مظبوط يسطا! ⚠️");
+            showScreen('screen-diamonds');
         }
 
-        // التنقل بين الشاشات
-        function showScreen(screenId) {
-            document.querySelectorAll('.container').forEach(screen => {
-                screen.classList.remove('active');
+        function selectDiamond(element, amount, price) {
+            document.querySelectorAll('.diamond-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedDiamonds = amount;
+            selectedPrice = price;
+        }
+
+        function nextToPayment() {
+            if(selectedDiamonds === 0) return alert("اختر كمية الجواهر الأول يسطا! 💎");
+            document.getElementById('total-price').innerText = selectedPrice;
+            showScreen('screen-payment');
+        }
+
+        // إرسال الطلب لفرع shop_orders في الفايربيز
+        function submitOrder() {
+            const senderNum = document.getElementById('sender-number').value.trim();
+            if(senderNum.length < 11) return alert("اكتب رقم المحفظة المكون من 11 رقم! 📱");
+
+            const orderId = 'order_' + Date.now();
+            database.ref('shop_orders/' + orderId).set({
+                id: orderId,
+                playerID: pID,
+                diamonds: selectedDiamonds,
+                price: selectedPrice,
+                sender: senderNum,
+                status: 'pending'
+            }).then(() => {
+                document.getElementById('success-id').innerText = pID;
+                showScreen('screen-success');
             });
-            document.getElementById(screenId).classList.add('active');
         }
 
-        function choosePlay() { showScreen('screen-login'); }
-        function chooseBout() { showScreen('screen-bout'); }
-        function goToLogin() { showScreen('screen-login'); }
-
-        // تسجيل الدخول وإنشاء الحساب
-        function handleAuth() {
-            const userInp = document.getElementById('username').value.trim();
-            const passInp = document.getElementById('password').value.trim();
-
-            if(!userInp || !passInp) {
-                alert("اكتب البيانات الأول يخويا! ⚠️");
-                return;
-            }
-
-            const existingUser = localStorage.getItem('registeredUser');
-
-            if (!existingUser) {
-                const userData = { username: userInp, password: passInp, balance: 10 };
-                localStorage.setItem('registeredUser', JSON.stringify(userData));
-                localStorage.setItem('isLoggedIn', 'true');
-                balance = 10;
-                alert("مبروك الحساب الجديد وخدت 10 جنيه هدية! 🎉");
-            } else {
-                const savedData = JSON.parse(existingUser);
-                if (savedData.username === userInp && savedData.password === passInp) {
-                    balance = savedData.balance;
-                    localStorage.setItem('isLoggedIn', 'true');
-                    alert(`أهلاً بعودتك يا ${userInp}! 👋`);
-                } else {
-                    alert("⚠️ خطأ: البيانات مش مطابقة، ومينفعش تعمل أكتر من حساب!");
-                    return;
-                }
-            }
-
-            updateBalanceDisplay();
-            document.getElementById('top-bar').style.display = 'flex';
-            showScreen('screen-games');
-        }
-
-        // تحديث وحفظ الرصيد في المتصفح بشكل دائم
-        function updateBalanceDisplay() {
-            document.getElementById('balance-amount').innerText = balance.toFixed(2);
-            let userData = JSON.parse(localStorage.getItem('registeredUser'));
-            if(userData) {
-                userData.balance = balance;
-                localStorage.setItem('registeredUser', JSON.stringify(userData));
-            }
-        }
-
-        // 👑 ميزات الأدمن السري 👑
-        function openAdminPanel() {
-            if(isGameRunning) return alert("إقفل الجيم الشغال الأول يسطا!");
-            
-            // طلب الباسورد السري للأدمن
-            const pass = prompt("اكتب الباسورد السري للأدمن عشان تفتح اللوحة:");
-            if (pass === ADMIN_PASSWORD) {
-                // حفظ الشاشة الحالية عشان نرجعلها بعدين
-                const activeContainer = document.querySelector('.container.active');
-                if(activeContainer) {
-                    previousScreen = activeContainer.id;
-                }
+        // فتح لوحة الإدارة بباسورد سري
+        function openAdmin() {
+            const pass = prompt("اكتب باسورد الإدارة السري:");
+            if(pass === "admin123") {
                 showScreen('screen-admin');
-            } else if (pass !== null) {
-                alert("الباسورد غلط يا صاحبي، ابعد عن هنا! 🤫");
-            }
+                loadAdminOrders();
+            } else if (pass !== null) { alert("غلط يا معلم 🤫"); }
         }
 
-        function addMoneyAsAdmin() {
-            const targetUser = document.getElementById('admin-target-user').value.trim();
-            const amountToAdd = parseFloat(document.getElementById('admin-amount-to-add').value);
-
-            if(!targetUser || isNaN(amountToAdd) || amountToAdd <= 0) {
-                alert("أدخل اسم يوزر ومبلغ صحيح يسطا الأدمين! ⚠️");
-                return;
-            }
-
-            const existingUser = localStorage.getItem('registeredUser');
-            if(!existingUser) {
-                alert("مفيش أي حسابات مسجلة في الموقع حالياً! ❌");
-                return;
-            }
-
-            let userData = JSON.parse(existingUser);
-            
-            // التحقق من أن اسم المستخدم مطابق للشخص المسجل
-            if(userData.username === targetUser) {
-                userData.balance = (userData.balance || 0) + amountToAdd;
-                localStorage.setItem('registeredUser', JSON.stringify(userData));
-                
-                // لو الأدمن هو نفسه صاحب الحساب المفتوح حالياً، نحدث رصيده على الشاشة فوراً
-                const currentSessionUser = JSON.parse(localStorage.getItem('registeredUser'));
-                if(currentSessionUser) {
-                    balance = currentSessionUser.balance;
-                    updateBalanceDisplay();
+        // سحب وعرض الطلبات لايف جوه جدول الأدمن
+        function loadAdminOrders() {
+            database.ref('shop_orders').on('value', (snapshot) => {
+                const tbody = document.getElementById('admin-orders-list');
+                tbody.innerHTML = "";
+                if(snapshot.exists()) {
+                    const data = snapshot.val();
+                    for(let key in data) {
+                        const order = data[key];
+                        const tr = document.createElement('tr');
+                        
+                        tr.innerHTML = `
+                            <td>${order.playerID}</td>
+                            <td style="color:#45f3ff;">💎 ${order.diamonds}</td>
+                            <td style="color:#4caf50;">${order.price} ج</td>
+                            <td>${order.sender}</td>
+                            <td class="${order.status === 'pending' ? 'status-pending' : 'status-done'}">
+                                ${order.status === 'pending' ? 'قيد الانتظار ⏳' : 'تم الشحن ✅'}
+                            </td>
+                            <td>
+                                ${order.status === 'pending' ? `<button class="btn-done" onclick="completeOrder('${order.id}')">تم الشحن</button>` : 'شُحن'}
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    }
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="6">لا توجد طلبات حالياً</td></tr>`;
                 }
-                
-                alert(`🎯 تم بنجاح إضافة ${amountToAdd} جنيه لحساب المستخدم [${targetUser}]!`);
-                // تصفير خانات الأدمن بعد الإضافة
-                document.getElementById('admin-target-user').value = "";
-                document.getElementById('admin-amount-to-add').value = "";
-            } else {
-                alert(`❌ خطأ: مفيش مستخدم مسجل بالاسم ده [${targetUser}]، اتأكد من الحروف!`);
-            }
+            });
         }
 
-        function closeAdminPanelAndReturn() {
-            showScreen(previousScreen);
-        }
-
-        // تسجيل الخروج
-        function logout() {
-            if(isGameRunning) return alert("إقفل الجيم الأول يسطا!");
-            localStorage.setItem('isLoggedIn', 'false'); 
-            document.getElementById('top-bar').style.display = 'none';
-            document.getElementById('username').value = "";
-            document.getElementById('password').value = "";
-            
-            document.getElementById('login-title').innerText = "تسجيل الدخول للحساب";
-            document.getElementById('btn-auth').innerText = "دخول";
-            
-            showScreen('screen-welcome');
-        }
-
-        function showGamesList() {
-            if(isGameRunning) return alert("إقفل الجيم الأول يسطا!");
-            showScreen('screen-games');
-        }
-
-        // لعبة الطيارة
-        function openPlaneGame() {
-            showScreen('screen-plane-game');
-            resetPlaneUI();
-        }
-
-        function resetPlaneUI() {
-            document.getElementById('plane').style.bottom = "10px";
-            document.getElementById('plane').style.left = "10px";
-            document.getElementById('multiplier').innerText = "1.00x";
-            document.getElementById('multiplier').style.color = "#ffd700";
-            document.getElementById('game-status').style.display = "none";
-            document.getElementById('btn-start-game').disabled = false;
-            document.getElementById('btn-cashout').disabled = true;
-        }
-
-        function startPlaneGame() {
-            const betInput = document.getElementById('bet-amount');
-            let bet = parseFloat(betInput.value);
-
-            if (bet < 8 || isNaN(bet)) {
-                alert("الحد الادني للرهان 8 جنيه يخويا متكررهاش تاني 🤫");
-                return;
-            }
-
-            if (bet > balance) {
-                alert("معكش فلوس تكفي الرهان ده يسطا، رصيدك قليل! 💸");
-                return;
-            }
-
-            balance -= bet;
-            updateBalanceDisplay();
-
-            isGameRunning = true;
-            currentMultiplier = 1.00;
-            crashPoint = (Math.random() * 4 + 1).toFixed(2); 
-
-            document.getElementById('btn-start-game').disabled = true;
-            document.getElementById('btn-cashout').disabled = false;
-            document.getElementById('game-status').style.display = "none";
-            document.getElementById('multiplier').style.color = "#ffd700";
-
-            let planeX = 10;
-            let planeY = 10;
-
-            gameInterval = setInterval(() => {
-                currentMultiplier += 0.04;
-                document.getElementById('multiplier').innerText = currentMultiplier.toFixed(2) + "x";
-
-                planeX += 1.5;
-                planeY += 0.8;
-                if(planeX < 80) document.getElementById('plane').style.left = planeX + "%";
-                if(planeY < 70) document.getElementById('plane').style.bottom = planeY + "%";
-
-                if (currentMultiplier >= crashPoint) {
-                    endGame(false, bet);
-                }
-            }, 100);
-        }
-
-        function cashout() {
-            if (!isGameRunning) return;
-            const bet = parseFloat(document.getElementById('bet-amount').value);
-            endGame(true, bet);
-        }
-
-        function endGame(isWin, bet) {
-            clearInterval(gameInterval);
-            isGameRunning = false;
-            document.getElementById('btn-cashout').disabled = true;
-            document.getElementById('btn-start-game').disabled = false;
-
-            if (isWin) {
-                let winAmount = bet * currentMultiplier;
-                balance += winAmount;
-                updateBalanceDisplay();
-                document.getElementById('multiplier').style.color = "#4caf50";
-                alert(`عاش يا وحش! كسبت ${winAmount.toFixed(2)} جنيه 💰`);
-                resetPlaneUI();
-            } else {
-                document.getElementById('multiplier').innerText = "💥 انفجرت عند " + crashPoint + "x";
-                document.getElementById('multiplier').style.color = "#ff416c";
-                document.getElementById('game-status').style.display = "block";
-                alert("الطيارة طارت والفلوس راحت عليك يا صاحبي! 🛩️💨");
-            }
+        // زرار تحويل حالة الطلب لـ "تم الشحن"
+        function completeOrder(orderId) {
+            database.ref('shop_orders/' + orderId).update({
+                status: 'done'
+            }).then(() => {
+                alert("تم تحديث الطلب وشحن الجواهر بنجاح! 🎯");
+            });
         }
     </script>
 </body>
