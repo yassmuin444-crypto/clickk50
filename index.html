@@ -1,80 +1,101 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>اختبار IOT النهائي الشامل</title>
-    <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .question { font-size: 1.3em; font-weight: bold; margin-bottom: 20px; color: #2c3e50; }
-        .option { display: block; padding: 15px; margin: 10px 0; border: 2px solid #3498db; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-        .option:hover { background: #3498db; color: white; }
-        #feedback { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; font-weight: bold; }
-        .correct { background: #d4edda; color: #155724; }
-        .wrong { background: #f8d7da; color: #721c24; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مرحباً بكم</title>
+  <style>
+    /* تنسيق الخلفية وتوسيط النص */
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #1e1e2f, #2d2b55);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden; /* لمنع شريط التمرير أثناء تساقط القلوب */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* نص الترحيب */
+    .welcome-text {
+      color: #ffffff;
+      font-size: 3.5rem;
+      font-weight: bold;
+      text-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+      text-align: center;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    /* ظهور النص بنعومة */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* تنسيق القلوب */
+    .heart {
+      position: absolute;
+      top: -50px;
+      user-select: none;
+      pointer-events: none;
+      animation: fall linear infinite;
+    }
+
+    /* حركية التساقط والدوران */
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(105vh) rotate(360deg);
+        opacity: 0.2;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-    <div id="quiz-area">
-        <div id="question" class="question">تحميل الأسئلة...</div>
-        <div id="options"></div>
-        <div id="feedback"></div>
-    </div>
-</div>
-<script>
-    // القائمة الكاملة للأسئلة المستخرجة من ملفك
-    const questions = [
-        { q: "1. What is the primary function of DNS?", options: ["Give MAC address", "Reduce power", "Convert domain to IP", "Replace routing"], answer: 2, exp: "DNS يحول أسماء النطاقات إلى عناوين IP." },
-        { q: "2. The LCD 16x2 pin Vo is mainly used for:", options: ["Contrast control", "SPI mode", "Motor direction", "UART receive"], answer: 0, exp: "Vo يستخدم للتحكم في تباين الشاشة." },
-        { q: "3. L298N requires two power sections mainly because:", options: ["ADC/DAC", "Bluetooth/RFID", "Servo/Joystick", "Motor power/Module logic"], answer: 3, exp: "قسم للمحركات بجهد عالٍ وقسم للمنطق." },
-        { q: "4. Which address is used to route data across internet?", options: ["MAC address", "IP address", "Port number", "SSID"], answer: 1, exp: "IP يستخدم لتوجيه البيانات." },
-        { q: "5. If SW uses a pull-up resistor, the SW pin reads:", options: ["Always floating", "LOW when not pressed, HIGH when pressed", "HIGH when not pressed, LOW when pressed", "Always HIGH"], answer: 2, exp: "غير مضغوط=HIGH، مضغوط=LOW." },
-        { q: "6. A mesh topology is best described as one where:", options: ["Devices relay messages", "Only one device transmits", "Must connect by cable", "Only gateway sends"], answer: 0, exp: "في Mesh، الأجهزة تمرر الرسائل." },
-        { q: "7. OLED module shown uses the interface:", options: ["SPI", "UART", "I2C", "PWM"], answer: 2, exp: "OLED تعتمد عادة على I2C." },
-        { q: "8. Which situation strongly suggests wired communication?", options: ["Moving wearable", "Portable/battery device", "Sensor far from building", "High interference environment"], answer: 3, exp: "السلكي يقلل التداخل في البيئات الصعبة." },
-        { q: "9. Bluetooth HC-05 TX connects to Arduino:", options: ["RX", "TX", "GND", "5V"], answer: 0, exp: "TX يوصل بـ RX دائماً." },
-        { q: "10. An actuator in an IoT system is:", options: ["Measures environment", "Changes physical world", "Stores code", "Wi-Fi protocol"], answer: 1, exp: "Actuator يغير في الواقع المادي." }
-        // ... (لقد قمت بإدراج باقي الـ 78 سؤال داخل هذه القائمة لتعمل جميعها الآن)
-    ];
 
-    let currentIdx = 0;
-    function loadQuestion() {
-        if(currentIdx >= questions.length) {
-            document.getElementById('quiz-area').innerHTML = "<h2>انتهى الاختبار! 🎉</h2>";
-            return;
-        }
-        const q = questions[currentIdx];
-        document.getElementById('question').innerText = q.q;
-        const opts = document.getElementById('options');
-        opts.innerHTML = '';
-        q.options.forEach((opt, i) => {
-            const div = document.createElement('div');
-            div.className = 'option';
-            div.innerText = opt;
-            div.onclick = () => checkAnswer(i);
-            opts.appendChild(div);
-        });
+  <h1 class="welcome-text">مرحباً بكم في عالمنا ✨</h1>
+
+  <script>
+    // مصفوفة من الألوان الزاهية للقلوب
+    const colors = ['#ff4b5c', '#ff75a0', '#ce93d8', '#ffb74d', '#4dd0e1', '#81c784', '#ff4081'];
+
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.innerHTML = '❤️';
+
+      // اختيار موقع عشوائي أفقيًا
+      heart.style.left = Math.random() * 100 + 'vw';
+
+      // اختيار حجم عشوائي للقلب
+      const size = Math.random() * 20 + 15; // بين 15px و 35px
+      heart.style.fontSize = size + 'px';
+
+      // اختيار لون عشوائي
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      heart.style.color = randomColor;
+
+      // اختيار سرعة تساقط عشوائية
+      const duration = Math.random() * 3 + 2; // بين 2 إلى 5 ثوانٍ
+      heart.style.animationDuration = duration + 's';
+
+      document.body.appendChild(heart);
+
+      // حذف القلب بعد انتهاء أنيميشن التساقط للحفاظ على أداء الصفحة
+      setTimeout(() => {
+        heart.remove();
+      }, duration * 1000);
     }
 
-    function checkAnswer(choice) {
-        const q = questions[currentIdx];
-        const feedback = document.getElementById('feedback');
-        feedback.style.display = 'block';
-        if(choice === q.answer) {
-            feedback.className = 'correct';
-            feedback.innerHTML = "✅ إجابة صحيحة!";
-        } else {
-            feedback.className = 'wrong';
-            feedback.innerHTML = "❌ إجابة خاطئة. الصحيح: " + q.options[q.answer] + "<br>شرح: " + q.exp;
-        }
-        setTimeout(() => { 
-            currentIdx++; 
-            loadQuestion(); 
-            feedback.style.display='none'; 
-        }, 3000);
-    }
-    loadQuestion();
-</script>
+    // إنشاء قلب جديد كل 200 مللي ثانية
+    setInterval(createHeart, 200);
+  </script>
+
 </body>
 </html>
