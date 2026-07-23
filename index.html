@@ -3,39 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مرحباً بكم</title>
+  <title>مرحباً بكم - لعبة المطاردة</title>
   <style>
-    /* تنسيق الخلفية وتوسيط النص */
     body {
       margin: 0;
       padding: 0;
       height: 100vh;
       background: linear-gradient(135deg, #1e1e2f, #2d2b55);
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      overflow: hidden; /* لمنع شريط التمرير أثناء تساقط القلوب */
+      overflow: hidden;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     /* نص الترحيب */
+    .welcome-container {
+      text-align: center;
+      z-index: 10;
+      transition: opacity 0.5s ease;
+    }
+
     .welcome-text {
       color: #ffffff;
       font-size: 3.5rem;
       font-weight: bold;
       text-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-      z-index: 10;
-      text-align: center;
+      margin-bottom: 20px;
       animation: fadeIn 2s ease-in-out;
     }
 
-    /* ظهور النص بنعومة */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* زر هيا نلعب */
+    .play-btn {
+      background: linear-gradient(45deg, #ff4081, #ff75a0);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    /* تنسيق القلوب */
+    .play-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 8px 25px rgba(255, 64, 129, 0.6);
+    }
+
+    /* أنيميشن القلوب */
     .heart {
       position: absolute;
       top: -50px;
@@ -44,58 +62,248 @@
       animation: fall linear infinite;
     }
 
-    /* حركية التساقط والدوران */
     @keyframes fall {
-      0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(105vh) rotate(360deg);
-        opacity: 0.2;
-      }
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(105vh) rotate(360deg); opacity: 0.2; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* منطقة اللعبة */
+    #game-screen {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* لوحة النتيجة والصوت */
+    .game-ui {
+      position: absolute;
+      top: 20px;
+      width: 90%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+      color: white;
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(5px);
+    }
+
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .audio-controls input[type=range] {
+      cursor: pointer;
+    }
+
+    /* الزر المتحرك الصعب */
+    #target-btn {
+      position: absolute;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background-color: #ffb74d;
+      color: #1e1e2f;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 183, 77, 0.8);
+      transition: all 0.2s ease-out;
+      z-index: 15;
     }
   </style>
 </head>
 <body>
 
-  <h1 class="welcome-text">مرحباً بكم في عالمنا ✨</h1>
+  <!-- الشاشة الرئيسية -->
+  <div class="welcome-container" id="welcome-screen">
+    <h1 class="welcome-text">مرحباً بكم في عالمنا ✨</h1>
+    <button class="play-btn" onclick="startGame()">هيا نلعب 🎮</button>
+  </div>
+
+  <!-- شاشة اللعبة -->
+  <div id="game-screen">
+    <div class="game-ui">
+      <div>الجولة: <span id="level-num">1</span></div>
+      <div>النقاط: <span id="score-num">0</span></div>
+      
+      <!-- التحكم بالصوت -->
+      <div class="audio-controls">
+        🔊 <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5">
+      </div>
+    </div>
+
+    <!-- الزر المتحرك -->
+    <button id="target-btn" onclick="hitTarget()">أمسك بي! 🎯</button>
+  </div>
 
   <script>
-    // مصفوفة من الألوان الزاهية للقلوب
+    // --- 1. تساقط القلوب ---
     const colors = ['#ff4b5c', '#ff75a0', '#ce93d8', '#ffb74d', '#4dd0e1', '#81c784', '#ff4081'];
-
     function createHeart() {
       const heart = document.createElement('div');
       heart.classList.add('heart');
       heart.innerHTML = '❤️';
-
-      // اختيار موقع عشوائي أفقيًا
       heart.style.left = Math.random() * 100 + 'vw';
-
-      // اختيار حجم عشوائي للقلب
-      const size = Math.random() * 20 + 15; // بين 15px و 35px
+      const size = Math.random() * 20 + 15;
       heart.style.fontSize = size + 'px';
-
-      // اختيار لون عشوائي
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-      heart.style.color = randomColor;
-
-      // اختيار سرعة تساقط عشوائية
-      const duration = Math.random() * 3 + 2; // بين 2 إلى 5 ثوانٍ
+      heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+      const duration = Math.random() * 3 + 2;
       heart.style.animationDuration = duration + 's';
-
       document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), duration * 1000);
+    }
+    setInterval(createHeart, 250);
 
-      // حذف القلب بعد انتهاء أنيميشن التساقط للحفاظ على أداء الصفحة
-      setTimeout(() => {
-        heart.remove();
-      }, duration * 1000);
+    // --- 2. نظام الصوت والموسيقى التفاعلية ---
+    let audioCtx;
+    let masterGain;
+    let isPlayingAudio = false;
+
+    function initAudio() {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = 0.5; // مستوى الصوت المبدئي
+      masterGain.connect(audioCtx.destination);
+      playBackgroundMusic();
     }
 
-    // إنشاء قلب جديد كل 200 مللي ثانية
-    setInterval(createHeart, 200);
-  </script>
+    // إنشاء نغمات حماسية للعبة
+    function playBackgroundMusic() {
+      if (isPlayingAudio) return;
+      isPlayingAudio = true;
+      
+      const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25]; // سلم موسيقي
+      let noteIndex = 0;
 
+      setInterval(() => {
+        if (!audioCtx || audioCtx.state === 'suspended') return;
+        
+        let osc = audioCtx.createOscillator();
+        let noteGain = audioCtx.createGain();
+        
+        // تغيير سرعة النغمة بحسب الجولة
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(notes[noteIndex % notes.length], audioCtx.currentTime);
+        
+        noteGain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        noteGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+        
+        osc.connect(noteGain);
+        noteGain.connect(masterGain);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+
+        noteIndex = (noteIndex + Math.floor(Math.random() * 3) + 1) % notes.length;
+      }, 300);
+    }
+
+    // تأثير صوتي عند النقر على الزر
+    function playWinSound() {
+      if (!audioCtx) return;
+      let osc = audioCtx.createOscillator();
+      let soundGain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // نغمة مرتفعة مبهجة
+      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.2);
+      
+      soundGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      soundGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+      
+      osc.connect(soundGain);
+      soundGain.connect(masterGain);
+      
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.2);
+    }
+
+    // التحكم بتعالية وتوطية الصوت
+    document.getElementById('volume-slider').addEventListener('input', (e) => {
+      if (masterGain) {
+        masterGain.gain.value = e.target.value;
+      }
+    });
+
+    // --- 3. منطق اللعبة والجولات ---
+    let level = 1;
+    let score = 0;
+    let moveInterval;
+    const targetBtn = document.getElementById('target-btn');
+
+    function startGame() {
+      document.getElementById('welcome-screen').style.display = 'none';
+      document.getElementById('game-screen').style.display = 'block';
+      
+      // تشغيل الصوت بعد إذن المستخدم (عند الضغط)
+      initAudio();
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      startLevel();
+    }
+
+    function startLevel() {
+      document.getElementById('level-num').innerText = level;
+      document.getElementById('score-num').innerText = score;
+
+      // زيادة الصعوبة: الزر يصغر والسرعة تزيد
+      let speed = Math.max(400, 1200 - (level * 100)); // السرعة بالملي ثانية
+      let scale = Math.max(0.5, 1 - (level * 0.05)); // تصغير الحجم
+
+      targetBtn.style.transform = `scale(${scale})`;
+
+      // تحريك الزر تلقائياً
+      clearInterval(moveInterval);
+      moveButton(); 
+      moveInterval = setInterval(moveButton, speed);
+    }
+
+    // تحريك الزر لمكان عشوائي في الشاشة
+    function moveButton() {
+      const padding = 100;
+      const maxX = window.innerWidth - padding;
+      const maxY = window.innerHeight - padding;
+
+      const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+      const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+      targetBtn.style.left = randomX + 'px';
+      targetBtn.style.top = randomY + 'px';
+    }
+
+    // عند النجاح في النقر على الزر
+    function hitTarget() {
+      playWinSound();
+      score += 10;
+      level++;
+      
+      // تغيير لون الزر لإعطاء حماس
+      targetBtn.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      
+      startLevel(); // الانتقال للجولة التالية
+    }
+
+    // جعل الزر يهرب عندما تقترب الماوس منه في الجولات المتقدمة!
+    targetBtn.addEventListener('mouseover', () => {
+      if (level >= 3) {
+        moveButton();
+      }
+    });
+  </script>
 </body>
 </html>
