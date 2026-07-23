@@ -3,22 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مرحباً بكم - لعبة المطاردة</title>
+  <title>مرحباً بكم - لعبة الطائرة</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       height: 100vh;
-      background: linear-gradient(135deg, #1e1e2f, #2d2b55);
+      background: linear-gradient(135deg, #0f172a, #1e1b4b);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       overflow: hidden;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
     }
 
-    /* نص الترحيب */
+    /* الشاشة الرئيسية */
     .welcome-container {
       text-align: center;
       z-index: 10;
@@ -26,7 +27,6 @@
     }
 
     .welcome-text {
-      color: #ffffff;
       font-size: 3.5rem;
       font-weight: bold;
       text-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
@@ -34,7 +34,6 @@
       animation: fadeIn 2s ease-in-out;
     }
 
-    /* زر هيا نلعب */
     .play-btn {
       background: linear-gradient(45deg, #ff4081, #ff75a0);
       color: white;
@@ -53,7 +52,7 @@
       box-shadow: 0 8px 25px rgba(255, 64, 129, 0.6);
     }
 
-    /* أنيميشن القلوب */
+    /* تساقط القلوب */
     .heart {
       position: absolute;
       top: -50px;
@@ -72,7 +71,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* منطقة اللعبة */
+    /* شاشة اللعبة */
     #game-screen {
       display: none;
       width: 100vw;
@@ -82,21 +81,22 @@
       left: 0;
     }
 
-    /* لوحة النتيجة والصوت */
+    /* شريط التحكم العلوي */
     .game-ui {
       position: absolute;
       top: 20px;
+      left: 5%;
       width: 90%;
       display: flex;
       justify-content: space-between;
       align-items: center;
       z-index: 20;
-      color: white;
       font-size: 1.2rem;
       background: rgba(255, 255, 255, 0.1);
-      padding: 10px 20px;
+      padding: 12px 24px;
       border-radius: 15px;
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(10px);
+      box-sizing: border-box;
     }
 
     .audio-controls {
@@ -105,24 +105,71 @@
       gap: 10px;
     }
 
-    .audio-controls input[type=range] {
-      cursor: pointer;
+    /* منصة الطائرة */
+    .canvas-container {
+      position: absolute;
+      top: 100px;
+      left: 5%;
+      width: 90%;
+      height: 60vh;
+      background: rgba(15, 23, 42, 0.6);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    /* الزر المتحرك الصعب */
-    #target-btn {
+    .multiplier-display {
+      font-size: 5rem;
+      font-weight: 900;
+      color: #38bdf8;
+      text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+      z-index: 10;
+    }
+
+    .plane {
       position: absolute;
-      padding: 15px 30px;
-      font-size: 1.2rem;
+      font-size: 4rem;
+      bottom: 20px;
+      left: 20px;
+      transition: all 0.1s linear;
+      z-index: 5;
+    }
+
+    /* أزرار اللعبة السفلية */
+    .controls-panel {
+      position: absolute;
+      bottom: 30px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      z-index: 20;
+    }
+
+    .action-btn {
+      padding: 15px 40px;
+      font-size: 1.5rem;
       font-weight: bold;
-      background-color: #ffb74d;
-      color: #1e1e2f;
       border: none;
-      border-radius: 30px;
+      border-radius: 15px;
       cursor: pointer;
-      box-shadow: 0 0 15px rgba(255, 183, 77, 0.8);
-      transition: all 0.2s ease-out;
-      z-index: 15;
+      transition: all 0.2s ease;
+      color: white;
+    }
+
+    .btn-start { background: #10b981; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+    .btn-cashout { background: #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); display: none; }
+    .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .status-msg {
+      position: absolute;
+      top: 20%;
+      font-size: 2rem;
+      font-weight: bold;
+      z-index: 10;
     }
   </style>
 </head>
@@ -134,20 +181,27 @@
     <button class="play-btn" onclick="startGame()">هيا نلعب 🎮</button>
   </div>
 
-  <!-- شاشة اللعبة -->
+  <!-- شاشة لعبة الطائرة -->
   <div id="game-screen">
     <div class="game-ui">
-      <div>الجولة: <span id="level-num">1</span></div>
-      <div>النقاط: <span id="score-num">0</span></div>
+      <div>الجولة: <span id="round-num">1</span></div>
+      <div>الرصيد: <span id="balance-num">100</span> نقطة</div>
       
-      <!-- التحكم بالصوت -->
       <div class="audio-controls">
         🔊 <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5">
       </div>
     </div>
 
-    <!-- الزر المتحرك -->
-    <button id="target-btn" onclick="hitTarget()">أمسك بي! 🎯</button>
+    <div class="canvas-container">
+      <div class="status-msg" id="status-msg"></div>
+      <div class="multiplier-display" id="multiplier">1.00x</div>
+      <div class="plane" id="plane">🚀</div>
+    </div>
+
+    <div class="controls-panel">
+      <button class="action-btn btn-start" id="start-btn" onclick="startFlight()">إقلاع 🚀</button>
+      <button class="action-btn btn-cashout" id="cashout-btn" onclick="cashOut()">سحب الأرباح 💰</button>
+    </div>
   </div>
 
   <script>
@@ -168,142 +222,135 @@
     }
     setInterval(createHeart, 250);
 
-    // --- 2. نظام الصوت والموسيقى التفاعلية ---
+    // --- 2. نظام الصوت والموسيقى ---
     let audioCtx;
     let masterGain;
-    let isPlayingAudio = false;
 
     function initAudio() {
+      if (audioCtx) return;
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       masterGain = audioCtx.createGain();
-      masterGain.gain.value = 0.5; // مستوى الصوت المبدئي
+      masterGain.gain.value = 0.5;
       masterGain.connect(audioCtx.destination);
-      playBackgroundMusic();
     }
 
-    // إنشاء نغمات حماسية للعبة
-    function playBackgroundMusic() {
-      if (isPlayingAudio) return;
-      isPlayingAudio = true;
-      
-      const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25]; // سلم موسيقي
-      let noteIndex = 0;
-
-      setInterval(() => {
-        if (!audioCtx || audioCtx.state === 'suspended') return;
-        
-        let osc = audioCtx.createOscillator();
-        let noteGain = audioCtx.createGain();
-        
-        // تغيير سرعة النغمة بحسب الجولة
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(notes[noteIndex % notes.length], audioCtx.currentTime);
-        
-        noteGain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        noteGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
-        
-        osc.connect(noteGain);
-        noteGain.connect(masterGain);
-        
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-
-        noteIndex = (noteIndex + Math.floor(Math.random() * 3) + 1) % notes.length;
-      }, 300);
-    }
-
-    // تأثير صوتي عند النقر على الزر
-    function playWinSound() {
+    function playBeep(freq, type = 'sine', duration = 0.1) {
       if (!audioCtx) return;
       let osc = audioCtx.createOscillator();
-      let soundGain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // نغمة مرتفعة مبهجة
-      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.2);
-      
-      soundGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-      soundGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-      
-      osc.connect(soundGain);
-      soundGain.connect(masterGain);
-      
+      let gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(masterGain);
       osc.start();
-      osc.stop(audioCtx.currentTime + 0.2);
+      osc.stop(audioCtx.currentTime + duration);
     }
 
-    // التحكم بتعالية وتوطية الصوت
     document.getElementById('volume-slider').addEventListener('input', (e) => {
-      if (masterGain) {
-        masterGain.gain.value = e.target.value;
-      }
+      if (masterGain) masterGain.gain.value = e.target.value;
     });
 
-    // --- 3. منطق اللعبة والجولات ---
-    let level = 1;
-    let score = 0;
-    let moveInterval;
-    const targetBtn = document.getElementById('target-btn');
+    // --- 3. منطق لعبة الطائرة ---
+    let balance = 100;
+    let round = 1;
+    let multiplier = 1.00;
+    let crashPoint = 0;
+    let flightInterval;
+    let isFlying = false;
+
+    const multiplierEl = document.getElementById('multiplier');
+    const planeEl = document.getElementById('plane');
+    const startBtn = document.getElementById('start-btn');
+    const cashoutBtn = document.getElementById('cashout-btn');
+    const statusMsg = document.getElementById('status-msg');
 
     function startGame() {
       document.getElementById('welcome-screen').style.display = 'none';
       document.getElementById('game-screen').style.display = 'block';
-      
-      // تشغيل الصوت بعد إذن المستخدم (عند الضغط)
       initAudio();
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-
-      startLevel();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    function startLevel() {
-      document.getElementById('level-num').innerText = level;
-      document.getElementById('score-num').innerText = score;
+    function startFlight() {
+      if (isFlying) return;
 
-      // زيادة الصعوبة: الزر يصغر والسرعة تزيد
-      let speed = Math.max(400, 1200 - (level * 100)); // السرعة بالملي ثانية
-      let scale = Math.max(0.5, 1 - (level * 0.05)); // تصغير الحجم
-
-      targetBtn.style.transform = `scale(${scale})`;
-
-      // تحريك الزر تلقائياً
-      clearInterval(moveInterval);
-      moveButton(); 
-      moveInterval = setInterval(moveButton, speed);
-    }
-
-    // تحريك الزر لمكان عشوائي في الشاشة
-    function moveButton() {
-      const padding = 100;
-      const maxX = window.innerWidth - padding;
-      const maxY = window.innerHeight - padding;
-
-      const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
-      const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
-
-      targetBtn.style.left = randomX + 'px';
-      targetBtn.style.top = randomY + 'px';
-    }
-
-    // عند النجاح في النقر على الزر
-    function hitTarget() {
-      playWinSound();
-      score += 10;
-      level++;
+      isFlying = true;
+      multiplier = 1.00;
+      statusMsg.innerText = '';
+      multiplierEl.style.color = '#38bdf8';
       
-      // تغيير لون الزر لإعطاء حماس
-      targetBtn.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      
-      startLevel(); // الانتقال للجولة التالية
+      // اختيار نقطة الانهيار بشكل عشوائي (تزداد صعوبة وتنوع)
+      crashPoint = (Math.random() * 5 + 1.1).toFixed(2); 
+
+      startBtn.style.display = 'none';
+      cashoutBtn.style.display = 'inline-block';
+      cashoutBtn.disabled = false;
+
+      // ضبط موقع الطائرة للبداية
+      planeEl.style.bottom = '20px';
+      planeEl.style.left = '20px';
+      planeEl.style.opacity = '1';
+
+      flightInterval = setInterval(() => {
+        multiplier += 0.03 + (multiplier * 0.01); // تسارع العداد
+        multiplierEl.innerText = multiplier.toFixed(2) + 'x';
+
+        // تحريك الطائرة نحو الأعلى واليمين
+        let progress = (multiplier - 1) / 5;
+        planeEl.style.bottom = Math.min(80, 20 + progress * 60) + '%';
+        planeEl.style.left = Math.min(80, 20 + progress * 60) + '%';
+
+        playBeep(200 + (multiplier * 50), 'sine', 0.05);
+
+        // تحقق من الانهيار / طيران الطائرة بعيداً
+        if (multiplier >= crashPoint) {
+          crash();
+        }
+      }, 100);
     }
 
-    // جعل الزر يهرب عندما تقترب الماوس منه في الجولات المتقدمة!
-    targetBtn.addEventListener('mouseover', () => {
-      if (level >= 3) {
-        moveButton();
-      }
-    });
+    function cashOut() {
+      if (!isFlying) return;
+      clearInterval(flightInterval);
+      isFlying = false;
+
+      let won = Math.floor(10 * multiplier);
+      balance += won;
+      document.getElementById('balance-num').innerText = balance;
+
+      statusMsg.style.color = '#10b981';
+      statusMsg.innerText = `فزت بـ ${won} نقطة! 🎉`;
+      playBeep(880, 'triangle', 0.3);
+
+      endRound();
+    }
+
+    function crash() {
+      clearInterval(flightInterval);
+      isFlying = false;
+
+      multiplierEl.style.color = '#ef4444';
+      statusMsg.style.color = '#ef4444';
+      statusMsg.innerText = 'طارت الطائرة! 💥 خسرت الجولة';
+      
+      // أنيميشن طيران الطائرة بعيداً
+      planeEl.style.left = '120%';
+      planeEl.style.bottom = '120%';
+      planeEl.style.opacity = '0';
+
+      playBeep(120, 'sawtooth', 0.4);
+
+      endRound();
+    }
+
+    function endRound() {
+      cashoutBtn.style.display = 'none';
+      startBtn.style.display = 'inline-block';
+      round++;
+      document.getElementById('round-num').innerText = round;
+    }
   </script>
 </body>
 </html>
