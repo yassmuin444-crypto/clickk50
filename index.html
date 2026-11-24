@@ -3,123 +3,1485 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>هدية محمود</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .card {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
-        .envelope-icon {
-            font-size: 80px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            display: inline-block;
-        }
-        .envelope-icon:hover {
-            transform: scale(1.1);
-        }
-        .hidden {
-            display: none;
-        }
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            font-size: 18px;
-            text-align: center;
-            outline: none;
-        }
-        input[type="password"]:focus {
-            border-color: #007bff;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.2s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .error {
-            color: red;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        .final-message {
-            font-size: 24px;
-            color: #d9534f;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
+    <title>1xEGP Aviator - المنصة الرسمية للألعاب</title>
 
-    <div class="card">
-        <!-- الخطوة الأولى: الظرف -->
-        <div id="step-envelope">
-            <div class="envelope-icon" onclick="openEnvelope()">✉️</div>
-            <h2>افتح هدية محمود يا عمر</h2>
-        </div>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- الخطوة الثانية: أدخل كلمة السر -->
-        <div id="step-password" class="hidden">
-            <h3>أدخل الباسورد للفتح</h3>
-            <input type="password" id="passwordInput" placeholder="****">
-            <button onclick="checkPassword()">تأكيد</button>
-            <div id="errorMessage" class="error"></div>
-        </div>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        <!-- الخطوة الثالثة: الرسالة النهائية -->
-        <div id="step-final" class="hidden">
-            <div class="final-message">شوف حد ينيكك</div>
-        </div>
-    </div>
+    <!-- Cairo Arabic Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <script>
-        // فتح الظرف والانتقال لصفحة الباسورد
-        function openEnvelope() {
-            document.getElementById('step-envelope').classList.add('hidden');
-            document.getElementById('step-password').classList.remove('hidden');
-        }
-
-        // التحقق من صحة كلمة السر
-        function checkPassword() {
-            const password = document.getElementById('passwordInput').value;
-            const errorDiv = document.getElementById('errorMessage');
-
-            if (password === '2222') {
-                document.getElementById('step-password').classList.add('hidden');
-                document.getElementById('step-final').classList.remove('hidden');
-            } else {
-                errorDiv.innerText = 'غلط!';
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#080b11',
+                            card: '#121824',
+                            cardLight: '#1b2436',
+                            border: '#28354d',
+                            red: '#e5254e',
+                            redHover: '#cc1a3f',
+                            gold: '#fbbf24',
+                            emerald: '#10b981',
+                            blue: '#2563eb'
+                        }
+                    },
+                    animation: {
+                        'float-3d': 'float3D 3.5s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 1.8s infinite',
+                        'plane-hover': 'planeHover 2s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float3D: {
+                            '0%, 100%': { transform: 'perspective(1000px) rotateX(12deg) translateY(0px) scale(1)' },
+                            '50%': { transform: 'perspective(1000px) rotateX(18deg) translateY(-8px) scale(1.02)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 15px rgba(229, 37, 78, 0.4)' },
+                            '50%': { boxShadow: '0 0 30px rgba(229, 37, 78, 0.8)' },
+                        },
+                        planeHover: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' }
+                        }
+                    }
+                }
             }
         }
     </script>
 
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #06080d;
+            color: #f1f5f9;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080b11;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #28354d;
+            border-radius: 4px;
+        }
+
+        /* 3D Broadcast Banner */
+        .banner-3d-wrapper {
+            perspective: 1000px;
+        }
+        .banner-3d-card {
+            background: linear-gradient(135deg, rgba(27, 36, 54, 0.95) 0%, rgba(18, 24, 36, 0.98) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.9), 0 0 25px rgba(251, 191, 36, 0.25) inset;
+            transform-style: preserve-3d;
+        }
+
+        /* Aviator Canvas Glow */
+        .game-canvas-box {
+            background: radial-gradient(circle at 10% 90%, rgba(229, 37, 78, 0.12) 0%, rgba(6, 8, 13, 0.95) 70%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-brand-red selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 w-11/12 max-w-md pointer-events-none"></div>
+
+    <!-- ==================== HEADER ==================== -->
+    <header class="bg-brand-card/95 backdrop-blur-md border-b border-brand-border sticky top-0 z-40 px-3 sm:px-6 py-2.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
+            
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-red via-red-500 to-amber-400 flex items-center justify-center shadow-lg shadow-brand-red/30">
+                    <i class="fa-solid fa-plane-up text-white text-xl -rotate-45"></i>
+                </div>
+                <div>
+                    <h1 class="font-black text-lg sm:text-xl tracking-wider text-white flex items-center gap-1.5 leading-none">
+                        <span>1xEGP</span>
+                        <span class="text-xs bg-brand-red text-white px-2 py-0.5 rounded font-extrabold tracking-normal">AVIATOR</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-400 hidden sm:block mt-0.5">المنصة المعتمدة للرهانات المباشرة</p>
+                </div>
+            </div>
+
+            <!-- User Balance & Actions (Visible when logged in) -->
+            <div id="header-user-info" class="hidden flex items-center gap-2 sm:gap-3">
+                
+                <!-- EGP Balance Display -->
+                <div class="bg-brand-dark border border-brand-border hover:border-amber-500/50 transition-all rounded-xl px-3 py-1.5 flex items-center gap-2 shadow-inner">
+                    <i class="fa-solid fa-wallet text-amber-400 text-sm"></i>
+                    <div class="flex flex-col text-right">
+                        <span class="text-[9px] text-slate-400 font-bold uppercase leading-tight">الرصيد الحقيقي</span>
+                        <span id="user-balance-display" class="font-black text-sm sm:text-base text-emerald-400 leading-tight">0.00 EGP</span>
+                    </div>
+                </div>
+
+                <!-- Promo / Giveaway Code Button -->
+                <button onclick="openModal('promo-modal')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-2 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-lg shadow-emerald-600/20 active:scale-95">
+                    <i class="fa-solid fa-gift text-amber-300"></i>
+                    <span class="hidden sm:inline">تفعيل كود</span>
+                </button>
+
+                <!-- Admin Panel Button (mahmoud ONLY) -->
+                <button id="admin-panel-btn" onclick="openAdminModal()" class="hidden bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-black px-3.5 py-2 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-lg shadow-amber-500/20 animate-pulse-glow hover:scale-105 active:scale-95">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>الأدمن</span>
+                </button>
+
+                <!-- Audio Toggle -->
+                <button id="sound-toggle-btn" onclick="toggleSound()" class="w-9 h-9 rounded-xl bg-brand-dark border border-brand-border text-slate-300 hover:text-white flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-volume-high text-sm"></i>
+                </button>
+
+                <!-- Logout Button -->
+                <button onclick="handleLogout()" title="تسجيل الخروج" class="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-right-from-bracket text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== 3D SERVER BROADCAST BANNER ==================== -->
+    <div id="server-3d-banner" class="hidden banner-3d-wrapper max-w-7xl mx-auto px-4 mt-3">
+        <div class="banner-3d-card animate-float-3d rounded-2xl p-3 sm:p-4 relative overflow-hidden flex items-center justify-between gap-4">
+            <!-- Glow background circle -->
+            <div class="absolute -right-10 -top-10 w-36 h-36 bg-amber-500/20 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="flex items-center gap-3 z-10 overflow-hidden w-full">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/50 flex-shrink-0 flex items-center justify-center text-amber-400 text-lg shadow-md shadow-amber-500/30">
+                    <i class="fa-solid fa-bullhorn animate-bounce"></i>
+                </div>
+                <div class="overflow-hidden w-full">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-black text-amber-400 uppercase tracking-wider bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">إشعار سيرفر مباشر</span>
+                        <span id="banner-timestamp" class="text-[10px] text-slate-400"></span>
+                    </div>
+                    <div id="banner-text-content" class="text-sm sm:text-base font-bold text-white tracking-wide truncate mt-0.5">
+                        مرحباً بكم في لعبة 1xEGP Aviator الرسمية!
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="dismissBanner()" class="text-slate-400 hover:text-white text-sm p-1 transition-all z-10">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 w-full flex-grow flex flex-col gap-4">
+
+        <!-- ================= AUTH & DEVICE LOCK SCREEN ================= -->
+        <section id="auth-section" class="flex-grow flex items-center justify-center py-6">
+            <div class="w-full max-w-md bg-brand-card border border-brand-border rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-red via-amber-500 to-emerald-500"></div>
+                
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-red/10 border border-brand-red/30 text-brand-red mx-auto flex items-center justify-center text-3xl mb-3 shadow-lg shadow-brand-red/10">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h2 class="text-2xl font-black text-white">تسجيل الدخول / الحساب</h2>
+                    <p class="text-xs text-slate-400 mt-1">يتم تقييد كل جهاز بحساب واحد فقط لمنع الاحتيال</p>
+                </div>
+
+                <!-- Device Lock Badge -->
+                <div id="device-locked-badge" class="hidden mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-center text-xs text-amber-300 font-bold">
+                    <i class="fa-solid fa-lock ml-1 text-amber-400"></i>
+                    هذا الجهاز مقيد بالحساب: <span id="locked-username-text" class="text-white font-extrabold underline"></span>
+                </div>
+
+                <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">اسم المستخدم (Username)</label>
+                        <div class="relative">
+                            <span class="absolute right-3.5 top-3 text-slate-500 text-sm"><i class="fa-solid fa-user"></i></span>
+                            <input type="text" id="auth-username" required placeholder="مثال: mahmoud أو player1" class="w-full bg-brand-dark border border-brand-border focus:border-brand-red rounded-xl pr-10 pl-3 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور (Password)</label>
+                        <div class="relative">
+                            <span class="absolute right-3.5 top-3 text-slate-500 text-sm"><i class="fa-solid fa-key"></i></span>
+                            <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-brand-dark border border-brand-border focus:border-brand-red rounded-xl pr-10 pl-3 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="auth-submit-btn" class="w-full bg-gradient-to-r from-brand-red to-red-600 hover:from-brand-redHover hover:to-red-700 text-white font-black py-3 rounded-xl shadow-lg shadow-brand-red/25 transition-all text-sm flex items-center justify-center gap-2 active:scale-95">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>الدخول إلى اللعبة</span>
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-4 border-t border-brand-border/60 text-center">
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        عند الدخول لأول مرة سيتم ربط الجهاز بـ Firebase تلقائياً ورصيدك الأولي سيكون <span class="text-emerald-400 font-bold">0.00 EGP</span>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= AVIATOR GAME INTERFACE ================= -->
+        <section id="game-section" class="hidden flex-grow flex flex-col gap-4">
+
+            <!-- HISTORY MULTIPLIERS BAR -->
+            <div class="bg-brand-card border border-brand-border rounded-2xl p-2.5 flex items-center gap-2 overflow-x-auto shadow-md">
+                <span class="text-xs font-bold text-slate-400 whitespace-nowrap pl-2 border-l border-brand-border flex items-center gap-1">
+                    <i class="fa-solid fa-clock-rotate-left text-brand-red"></i>
+                    السجل:
+                </span>
+                <div id="history-pills-container" class="flex items-center gap-1.5 overflow-x-auto py-0.5">
+                    <!-- Dynamic Pills -->
+                </div>
+            </div>
+
+            <!-- GAME GRID (Canvas + Betting Controls) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                
+                <!-- CANVAS CRASH DISPLAY (2 Columns) -->
+                <div class="lg:col-span-2 bg-brand-card border border-brand-border rounded-3xl p-3 sm:p-4 flex flex-col justify-between relative overflow-hidden shadow-2xl min-h-[360px] sm:min-h-[420px] game-canvas-box">
+                    
+                    <!-- Top Status Overlay inside Canvas -->
+                    <div class="flex items-center justify-between z-10 mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-brand-red/10 text-brand-red border border-brand-red/30">
+                                <span class="w-2 h-2 rounded-full bg-brand-red animate-ping"></span>
+                                <span>1xBet Aviator Live</span>
+                            </span>
+                        </div>
+                        <div class="text-xs font-mono text-slate-400">
+                            الجولة: #<span id="round-number">1001</span>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Box -->
+                    <div class="relative flex-grow flex items-center justify-center my-2">
+                        <canvas id="crashCanvas" class="w-full h-full absolute inset-0 rounded-2xl"></canvas>
+                        
+                        <!-- Overlay Text (Countdown / Multiplier / Crash) -->
+                        <div id="canvas-overlay" class="z-20 text-center pointer-events-none flex flex-col items-center justify-center">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Bottom Canvas Info -->
+                    <div class="flex items-center justify-between z-10 text-xs text-slate-400 pt-2 border-t border-brand-border/40">
+                        <span class="flex items-center gap-1">
+                            <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                            تشفير عادلProvably Fair 97.5%
+                        </span>
+                        <span class="flex items-center gap-1 text-slate-300">
+                            <i class="fa-solid fa-users text-amber-400"></i>
+                            <span id="players-num">184</span> متصل الآن
+                        </span>
+                    </div>
+                </div>
+
+                <!-- BETTING CONTROL PANEL -->
+                <div class="bg-brand-card border border-brand-border rounded-3xl p-4 sm:p-5 flex flex-col justify-between gap-4 shadow-xl">
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-brand-border pb-3">
+                            <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-brand-red"></i>
+                                لوحة الرهان
+                            </h3>
+                            <span class="text-xs font-bold text-emerald-400 bg-brand-dark px-2.5 py-1 rounded-lg border border-brand-border">EGP</span>
+                        </div>
+
+                        <!-- Bet Input -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1.5">مبلغ الرهان (EGP)</label>
+                            <div class="relative">
+                                <input type="number" id="bet-amount-input" value="10" min="1" step="1" class="w-full bg-brand-dark border border-brand-border focus:border-brand-red rounded-xl px-4 py-3 text-lg font-black text-amber-400 focus:outline-none transition-all">
+                                <span class="absolute left-3 top-3.5 text-xs font-bold text-slate-500">EGP</span>
+                            </div>
+                        </div>
+
+                        <!-- Quick Bet Chips -->
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="setBetPreset(10)" class="bg-brand-dark hover:bg-brand-border text-slate-200 text-xs font-bold py-2 rounded-xl border border-brand-border transition-all">+10</button>
+                            <button onclick="setBetPreset(50)" class="bg-brand-dark hover:bg-brand-border text-slate-200 text-xs font-bold py-2 rounded-xl border border-brand-border transition-all">+50</button>
+                            <button onclick="setBetPreset(100)" class="bg-brand-dark hover:bg-brand-border text-slate-200 text-xs font-bold py-2 rounded-xl border border-brand-border transition-all">+100</button>
+                            <button onclick="doubleBet()" class="bg-brand-dark hover:bg-brand-border text-amber-400 text-xs font-bold py-2 rounded-xl border border-brand-border transition-all">2X</button>
+                        </div>
+
+                        <!-- Auto Cashout Setting -->
+                        <div class="bg-brand-dark/60 border border-brand-border/60 rounded-2xl p-3 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label for="auto-cashout-toggle" class="text-xs font-bold text-slate-300 flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="auto-cashout-toggle" onchange="toggleAutoCashout()" class="w-4 h-4 accent-brand-red rounded cursor-pointer">
+                                    <span>سحب أرباح تلقائي</span>
+                                </label>
+                                <span class="text-[10px] text-slate-500">Auto Cashout</span>
+                            </div>
+                            <div id="auto-cashout-input-wrapper" class="hidden">
+                                <div class="relative">
+                                    <input type="number" id="auto-cashout-val" value="2.00" min="1.01" step="0.1" class="w-full bg-brand-dark border border-brand-border rounded-lg px-3 py-1.5 text-sm font-bold text-emerald-400 focus:outline-none">
+                                    <span class="absolute left-2.5 top-1.5 text-xs text-slate-500">X</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="pt-2">
+                        <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-4 rounded-2xl font-black text-lg transition-all shadow-xl flex flex-col items-center justify-center gap-0.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-black shadow-emerald-500/20 active:scale-95">
+                            <span id="btn-text-primary">وضع رهان</span>
+                            <span id="btn-text-secondary" class="text-xs font-bold text-black/70">للجولة القادمة</span>
+                        </button>
+                    </div>
+
+                    <!-- Current Active Bet Status -->
+                    <div id="active-bet-status" class="hidden bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-3 text-center">
+                        <div class="text-xs text-slate-400">رهانك القائم</div>
+                        <div class="text-base font-black text-emerald-400"><span id="active-bet-val">0.00</span> EGP</div>
+                        <div id="expected-win-val" class="text-xs font-bold text-amber-400 mt-0.5">الربح المتوقع: 0.00 EGP</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- LIVE PLAYERS FEED TABLE -->
+            <div class="bg-brand-card border border-brand-border rounded-3xl p-4 shadow-xl">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                        <i class="fa-solid fa-users text-brand-red"></i>
+                        رهانات اللاعبين المباشرة
+                    </h4>
+                    <span class="text-xs text-slate-500">مباشر من السيرفر</span>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead>
+                            <tr class="text-slate-400 border-b border-brand-border/60 pb-2">
+                                <th class="py-2 font-bold">اسم اللاعب</th>
+                                <th class="py-2 font-bold">الرهان (EGP)</th>
+                                <th class="py-2 font-bold">معامل السحب</th>
+                                <th class="py-2 font-bold">الأرباح (EGP)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="live-bets-tbody" class="divide-y divide-brand-border/30 text-slate-200">
+                            <!-- Dynamic rows via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-brand-card/60 border-t border-brand-border py-4 px-4 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>جميع الحقوق محفوظة &copy; 2026 1xEGP Aviator Platform</span>
+            <span class="text-emerald-400 flex items-center gap-1.5 font-bold">
+                <i class="fa-solid fa-database text-xs"></i>
+                متصل بـ Firebase Realtime Database
+            </span>
+        </div>
+    </footer>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- PROMO / GIVEAWAY CODE REDEEM MODAL -->
+    <div id="promo-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-brand-card border border-brand-border rounded-3xl p-6 w-full max-w-md shadow-2xl relative">
+            <button onclick="closeModal('promo-modal')" class="absolute top-4 left-4 text-slate-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="text-center mb-5">
+                <div class="w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-400 mx-auto flex items-center justify-center text-2xl mb-2">
+                    <i class="fa-solid fa-gift"></i>
+                </div>
+                <h3 class="text-xl font-black text-white">تفعيل كود هدايا (Giveaway)</h3>
+                <p class="text-xs text-slate-400 mt-1">أدخل الكود الصادر من الأدمن لإضافة الرصيد لحسابك فوراً</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">رمز الكود</label>
+                    <input type="text" id="promo-code-input" placeholder="مثال: EGP100 أو MAHMOUD50" class="w-full bg-brand-dark border border-brand-border focus:border-emerald-500 rounded-xl px-4 py-3 text-center text-lg font-black tracking-widest text-emerald-400 uppercase focus:outline-none transition-all">
+                </div>
+
+                <button onclick="handleRedeemCode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>تفعيل واستلام الرصيد</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXCLUSIVE ADMIN PANEL MODAL (mahmoud ONLY) -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-brand-card border border-amber-500/40 rounded-3xl p-6 w-full max-w-2xl shadow-2xl relative my-8">
+            <button onclick="closeModal('admin-modal')" class="absolute top-4 left-4 text-slate-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Admin Header -->
+            <div class="flex items-center gap-3 border-b border-brand-border pb-4 mb-5">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-400 text-2xl">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-white flex items-center gap-2">
+                        لوحة تحكم الأدمن
+                        <span class="text-xs bg-amber-500 text-black px-2 py-0.5 rounded font-bold">خاص بالأدمن mahmoud</span>
+                    </h3>
+                    <p class="text-xs text-slate-400">تحكم كامل في قاعدة البيانات الحية Firebase</p>
+                </div>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="grid grid-cols-3 gap-2 mb-6">
+                <button onclick="switchAdminTab('tab-funds')" id="tab-btn-funds" class="admin-tab-btn active bg-amber-500 text-black font-bold py-2 rounded-xl text-xs transition-all">
+                    <i class="fa-solid fa-money-bill-wave ml-1"></i> إرسال رصيد
+                </button>
+                <button onclick="switchAdminTab('tab-codes')" id="tab-btn-codes" class="admin-tab-btn bg-brand-dark text-slate-300 font-bold py-2 rounded-xl text-xs border border-brand-border transition-all">
+                    <i class="fa-solid fa-ticket ml-1"></i> إنشاء كود جيفاواي
+                </button>
+                <button onclick="switchAdminTab('tab-banner')" id="tab-btn-banner" class="admin-tab-btn bg-brand-dark text-slate-300 font-bold py-2 rounded-xl text-xs border border-brand-border transition-all">
+                    <i class="fa-solid fa-bullhorn ml-1"></i> إشعار 3D للسيرفر
+                </button>
+            </div>
+
+            <!-- TAB 1: SEND FUNDS -->
+            <div id="tab-funds" class="admin-tab-content space-y-4">
+                <div class="bg-brand-dark/60 border border-brand-border p-4 rounded-2xl space-y-3">
+                    <h4 class="font-bold text-sm text-amber-400">إرسال رصيد مباشر لأي لاعب</h4>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">اسم المستخدم (Username)</label>
+                        <input type="text" id="admin-target-user" placeholder="مثال: player1" class="w-full bg-brand-dark border border-brand-border focus:border-amber-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">المبلغ المراد إرساله (EGP)</label>
+                        <input type="number" id="admin-send-amount" placeholder="100" min="1" class="w-full bg-brand-dark border border-brand-border focus:border-amber-500 rounded-xl px-3 py-2 text-sm text-amber-400 font-bold focus:outline-none">
+                    </div>
+                    <button onclick="adminSendFunds()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-black py-2.5 rounded-xl transition-all text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>إرسال الرصيد فوراً بـ Firebase</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 2: CREATE GIVEAWAY CODE -->
+            <div id="tab-codes" class="admin-tab-content hidden space-y-4">
+                <div class="bg-brand-dark/60 border border-brand-border p-4 rounded-2xl space-y-3">
+                    <h4 class="font-bold text-sm text-amber-400">إنشاء كود جيفاواي جديد</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">رمز الكود</label>
+                            <input type="text" id="admin-code-name" placeholder="EGP500" class="w-full bg-brand-dark border border-brand-border focus:border-amber-500 rounded-xl px-3 py-2 text-sm text-white uppercase focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">قيمة الكود (EGP)</label>
+                            <input type="number" id="admin-code-val" placeholder="50" min="1" class="w-full bg-brand-dark border border-brand-border focus:border-amber-500 rounded-xl px-3 py-2 text-sm text-emerald-400 font-bold focus:outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">الحد الأقصى لعدد الاستخدامات</label>
+                        <input type="number" id="admin-code-limit" placeholder="10" min="1" value="10" class="w-full bg-brand-dark border border-brand-border focus:border-amber-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none">
+                    </div>
+                    <button onclick="adminCreateCode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl transition-all text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <span>إنشاء وحفظ الكود بـ Firebase</span>
+                    </button>
+                </div>
+
+                <!-- Active Codes Table -->
+                <div class="bg-brand-dark/40 border border-brand-border rounded-2xl p-3">
+                    <h5 class="text-xs font-bold text-slate-300 mb-2">الأكواد النشطة بـ Firebase:</h5>
+                    <div id="admin-codes-list" class="space-y-1.5 max-h-40 overflow-y-auto text-xs">
+                        <!-- Dynamic list -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: 3D BROADCAST BANNER -->
+            <div id="tab-banner" class="admin-tab-content hidden space-y-4">
+                <div class="bg-brand-dark/60 border border-brand-border p-4 rounded-2xl space-y-3">
+                    <h4 class="font-bold text-sm text-amber-400">إرسال إشعار 3D متحرك لأعلى شاشة جميع المتصلين</h4>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">نص الرسالة / الإعلان</label>
+                        <textarea id="admin-banner-text" rows="3" placeholder="اكتب الرسالة هنا..." class="w-full bg-brand-dark border border-brand-border focus:border-amber-500 rounded-xl p-3 text-sm text-white focus:outline-none"></textarea>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="adminPublishBanner()" class="flex-1 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-black font-black py-2.5 rounded-xl transition-all text-sm flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-broadcast-tower"></i>
+                            <span>نشر الإشعار 3D أونلاين</span>
+                        </button>
+                        <button onclick="adminClearBanner()" class="bg-red-500/20 hover:bg-red-500 hover:text-white border border-red-500/40 text-red-400 font-bold px-4 py-2.5 rounded-xl transition-all text-sm">
+                            إخفاء الإعلان
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ==================== JAVASCRIPT & FIREBASE REALTIME DB INTEGRATION ==================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { 
+            getDatabase, ref, set, get, child, update, onValue, runTransaction, remove 
+        } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+        // Exact User Firebase Realtime Database Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDCvu-q5yVULj8yuvIm7GlewNGFs1NuFi0",
+            authDomain: "mahmoud-5e3a8.firebaseapp.com",
+            databaseURL: "https://mahmoud-5e3a8-default-rtdb.firebaseio.com",
+            projectId: "mahmoud-5e3a8",
+            storageBucket: "mahmoud-5e3a8.firebasestorage.app",
+            messagingSenderId: "580510951703",
+            appId: "1:580510951703:web:2483424405ff9f9cbbaf52",
+            measurementId: "G-K071H4EV3B"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Expose Firebase functions to global scope
+        window.FB = { db, ref, set, get, child, update, onValue, runTransaction, remove };
+
+        console.log("Firebase Realtime Database Connected Successfully!");
+
+        // Start App Logic once Firebase is initialized
+        window.initAppAfterFirebase();
+    </script>
+
+    <script>
+        // ==================== GLOBAL APP STATE ====================
+        let currentUser = null; // { username, balance, deviceId }
+        let soundMuted = false;
+        let audioCtx = null;
+        let deviceId = null;
+
+        // Crash Game Variables
+        let gameState = 'WAITING'; // 'WAITING', 'FLYING', 'CRASHED'
+        let currentMultiplier = 1.00;
+        let crashPoint = 1.00;
+        let countdownTime = 5.0;
+        let flightStartTime = 0;
+        let animationFrameId = null;
+        let historyMultipliers = [1.20, 3.45, 1.02, 8.15, 2.10, 14.50, 1.11, 4.30];
+        let currentBet = 0;
+        let hasCashedOut = false;
+        let roundId = 1001;
+
+        // Sound Effects Engine
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type, freq = 440) {
+            if (soundMuted) return;
+            try {
+                initAudio();
+                if (!audioCtx) return;
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'beep') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.12);
+                } else if (type === 'cashout') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.25);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.25);
+                } else if (type === 'crash') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(25, audioCtx.currentTime + 0.4);
+                    gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                }
+            } catch (e) {}
+        }
+
+        function toggleSound() {
+            soundMuted = !soundMuted;
+            const btn = document.getElementById('sound-toggle-btn');
+            btn.innerHTML = soundMuted 
+                ? '<i class="fa-solid fa-volume-xmark text-red-400 text-sm"></i>'
+                : '<i class="fa-solid fa-volume-high text-sm"></i>';
+            showToast(soundMuted ? 'تم كتم الصوت' : 'تم تشغيل الصوت', 'info');
+        }
+
+        // Toast Messages
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bg = 'bg-brand-card border-brand-border text-white';
+            let icon = 'fa-circle-info text-amber-400';
+
+            if (type === 'success') {
+                bg = 'bg-emerald-950/95 border-emerald-500/50 text-emerald-200';
+                icon = 'fa-circle-check text-emerald-400';
+            } else if (type === 'error') {
+                bg = 'bg-red-950/95 border-red-500/50 text-red-200';
+                icon = 'fa-triangle-exclamation text-red-400';
+            }
+
+            toast.className = `${bg} border backdrop-blur-md rounded-2xl p-3.5 shadow-2xl text-xs font-bold flex items-center gap-2.5 transition-all duration-300 transform translate-y-[-10px] opacity-0 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base flex-shrink-0"></i><span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-[-10px]', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function openModal(id) { document.getElementById(id)?.classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id)?.classList.add('hidden'); }
+
+        // ==================== DEVICE LOCK & FIREBASE AUTH ====================
+        function getDeviceId() {
+            let id = localStorage.getItem('1xegp_aviator_device_id');
+            if (!id) {
+                id = 'dev_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
+                localStorage.setItem('1xegp_aviator_device_id', id);
+            }
+            return id;
+        }
+
+        window.initAppAfterFirebase = async function() {
+            deviceId = getDeviceId();
+            
+            // Check Firebase device lock
+            try {
+                const dbRef = window.FB.ref(window.FB.db);
+                const snapshot = await window.FB.get(window.FB.child(dbRef, `devices/${deviceId}`));
+                
+                if (snapshot.exists()) {
+                    const boundUsername = snapshot.val().username;
+                    localStorage.setItem('1xegp_locked_user', boundUsername);
+                    
+                    document.getElementById('device-locked-badge').classList.remove('hidden');
+                    document.getElementById('locked-username-text').innerText = boundUsername;
+                    
+                    const usernameInput = document.getElementById('auth-username');
+                    usernameInput.value = boundUsername;
+                    usernameInput.readOnly = true;
+                    usernameInput.classList.add('opacity-70', 'cursor-not-allowed');
+                }
+            } catch (err) {
+                console.warn("Device lock fetch error", err);
+            }
+
+            // Subscribe to 3D Broadcast Banner live from Firebase
+            window.FB.onValue(window.FB.ref(window.FB.db, 'serverBroadcast'), (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.text) {
+                    document.getElementById('banner-text-content').innerText = data.text;
+                    document.getElementById('banner-timestamp').innerText = data.timestamp || '';
+                    document.getElementById('server-3d-banner').classList.remove('hidden');
+                    playSound('beep', 900);
+                } else {
+                    document.getElementById('server-3d-banner').classList.add('hidden');
+                }
+            });
+        };
+
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            initAudio();
+
+            const usernameInput = document.getElementById('auth-username').value.trim();
+            const passwordInput = document.getElementById('auth-password').value.trim();
+
+            if (!usernameInput || !passwordInput) {
+                showToast('يرجى إدخال اسم المستخدم وكلمة المرور', 'error');
+                return;
+            }
+
+            const cleanUserKey = usernameInput.toLowerCase().replace(/[^a-z0-9_]/g, '');
+
+            try {
+                const dbRef = window.FB.ref(window.FB.db);
+                
+                // 1. Check Device Lock
+                const deviceSnap = await window.FB.get(window.FB.child(dbRef, `devices/${deviceId}`));
+                if (deviceSnap.exists()) {
+                    const boundUser = deviceSnap.val().username;
+                    if (boundUser.toLowerCase() !== cleanUserKey) {
+                        showToast(`هذا الجهاز مقيد بحساب (${boundUser}) فقط! لا يمكنك استخدام حساب آخر.`, 'error');
+                        return;
+                    }
+                }
+
+                // 2. Fetch or Create User in Firebase
+                const userSnap = await window.FB.get(window.FB.child(dbRef, `users/${cleanUserKey}`));
+                
+                if (!userSnap.exists()) {
+                    // Register new user with 0.00 EGP initial balance
+                    const newUser = {
+                        username: usernameInput,
+                        cleanKey: cleanUserKey,
+                        password: passwordInput,
+                        balance: 0.00,
+                        deviceId: deviceId,
+                        createdAt: Date.now()
+                    };
+
+                    await window.FB.set(window.FB.ref(window.FB.db, `users/${cleanUserKey}`), newUser);
+                    await window.FB.set(window.FB.ref(window.FB.db, `devices/${deviceId}`), { username: usernameInput, boundAt: Date.now() });
+
+                    currentUser = newUser;
+                    showToast('تم إنشاء الحساب وربط الجهاز بنجاح! رصيدك الحالي: 0.00 EGP', 'success');
+                } else {
+                    // Login existing user
+                    const existingUser = userSnap.val();
+                    if (existingUser.password !== passwordInput) {
+                        showToast('كلمة المرور غير صحيحة!', 'error');
+                        return;
+                    }
+
+                    // Bind device if not bound
+                    if (!deviceSnap.exists()) {
+                        await window.FB.set(window.FB.ref(window.FB.db, `devices/${deviceId}`), { username: usernameInput, boundAt: Date.now() });
+                    }
+
+                    currentUser = existingUser;
+                    showToast(`أهلاً بعودتك يا ${currentUser.username}!`, 'success');
+                }
+
+                onLoginSuccess();
+
+            } catch (err) {
+                console.error("Auth error", err);
+                showToast('حدث خطأ في الاتصال بقاعدة البيانات', 'error');
+            }
+        }
+
+        function onLoginSuccess() {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('game-section').classList.remove('hidden');
+            document.getElementById('header-user-info').classList.remove('hidden');
+
+            // Subscribe to live user balance updates from Firebase
+            window.FB.onValue(window.FB.ref(window.FB.db, `users/${currentUser.cleanKey}/balance`), (snapshot) => {
+                const bal = snapshot.val();
+                if (bal !== null) {
+                    currentUser.balance = parseFloat(bal);
+                    document.getElementById('user-balance-display').innerText = `${currentUser.balance.toFixed(2)} EGP`;
+                }
+            });
+
+            // Check if admin mahmoud
+            if (currentUser.username.toLowerCase() === 'mahmoud') {
+                document.getElementById('admin-panel-btn').classList.remove('hidden');
+                showToast('مرحباً بك يا أدمن mahmoud!', 'success');
+            } else {
+                document.getElementById('admin-panel-btn').classList.add('hidden');
+            }
+
+            // Start Crash Engine
+            startCrashGameLoop();
+            renderHistoryPills();
+            renderLiveBetsTable();
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            document.getElementById('auth-section').classList.remove('hidden');
+            document.getElementById('game-section').classList.add('hidden');
+            document.getElementById('header-user-info').classList.add('hidden');
+            showToast('تم تسجيل الخروج بنجاح', 'info');
+        }
+
+        // ==================== AVIATOR / CRASH GAME ENGINE ====================
+        function generateCrashPoint() {
+            const rand = Math.random();
+            // ~3% instant crash at 1.00x
+            if (rand < 0.03) return 1.00;
+
+            const p = Math.random() * 97;
+            let crash = 97 / (100 - p);
+            if (crash > 150) crash = 150;
+            return parseFloat(crash.toFixed(2));
+        }
+
+        function startCrashGameLoop() {
+            startWaitingPhase();
+        }
+
+        function startWaitingPhase() {
+            gameState = 'WAITING';
+            countdownTime = 5.0;
+            currentMultiplier = 1.00;
+            hasCashedOut = false;
+            currentBet = 0;
+            document.getElementById('active-bet-status').classList.add('hidden');
+            
+            crashPoint = generateCrashPoint();
+            roundId++;
+            document.getElementById('round-number').innerText = roundId;
+
+            updateActionButton();
+
+            let lastTime = performance.now();
+            function countdownLoop(now) {
+                let delta = (now - lastTime) / 1000;
+                lastTime = now;
+                countdownTime -= delta;
+
+                if (countdownTime <= 0) {
+                    startFlyingPhase();
+                } else {
+                    renderCanvasWaiting(countdownTime);
+                    animationFrameId = requestAnimationFrame(countdownLoop);
+                }
+            }
+            animationFrameId = requestAnimationFrame(countdownLoop);
+        }
+
+        function startFlyingPhase() {
+            gameState = 'FLYING';
+            flightStartTime = performance.now();
+            updateActionButton();
+            playSound('beep', 750);
+
+            function flyingLoop(now) {
+                let elapsed = (now - flightStartTime) / 1000;
+                currentMultiplier = Math.pow(Math.E, 0.068 * elapsed);
+
+                // Auto Cashout check
+                const autoCashToggle = document.getElementById('auto-cashout-toggle').checked;
+                const autoCashVal = parseFloat(document.getElementById('auto-cashout-val').value) || 2.00;
+                
+                if (currentBet > 0 && !hasCashedOut && autoCashToggle && currentMultiplier >= autoCashVal) {
+                    cashOut();
+                }
+
+                if (currentMultiplier >= crashPoint) {
+                    currentMultiplier = crashPoint;
+                    triggerCrash();
+                } else {
+                    renderCanvasFlying(currentMultiplier, elapsed);
+                    updateBetDisplayDuringFlight();
+                    animationFrameId = requestAnimationFrame(flyingLoop);
+                }
+            }
+            animationFrameId = requestAnimationFrame(flyingLoop);
+        }
+
+        function triggerCrash() {
+            gameState = 'CRASHED';
+            playSound('crash');
+
+            historyMultipliers.unshift(currentMultiplier);
+            if (historyMultipliers.length > 10) historyMultipliers.pop();
+            renderHistoryPills();
+
+            updateActionButton();
+            renderCanvasCrashed(currentMultiplier);
+
+            setTimeout(() => {
+                startWaitingPhase();
+            }, 2600);
+        }
+
+        // ==================== CANVAS GRAPHICS RENDERER ====================
+        const canvas = document.getElementById('crashCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function renderCanvasWaiting(sec) {
+            resizeCanvas();
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+            drawRadarBackground(w, h);
+
+            const overlay = document.getElementById('canvas-overlay');
+            overlay.innerHTML = `
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">الجولة القادمة تبدأ خلال</div>
+                <div class="text-4xl sm:text-6xl font-black text-white tracking-wider font-mono">${sec.toFixed(1)}s</div>
+                <div class="w-48 h-1.5 bg-brand-dark rounded-full mt-3 overflow-hidden border border-brand-border">
+                    <div class="h-full bg-brand-red transition-all duration-100" style="width: ${(sec / 5.0) * 100}%"></div>
+                </div>
+            `;
+        }
+
+        function renderCanvasFlying(mult, elapsed) {
+            resizeCanvas();
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+            drawRadarBackground(w, h);
+
+            const startX = 35;
+            const startY = h - 35;
+            const progress = Math.min(elapsed / 12, 0.85);
+            const planeX = startX + (w - 70) * progress;
+            const planeY = startY - (h - 90) * Math.min(Math.pow(progress, 1.25), 0.9);
+
+            // Glowing Trajectory Curve
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.quadraticCurveTo(startX + (planeX - startX) * 0.5, startY, planeX, planeY);
+            ctx.strokeStyle = '#e5254e';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#e5254e';
+            ctx.shadowBlur = 18;
+            ctx.stroke();
+
+            // Gradient Fill Under Curve
+            ctx.lineTo(planeX, startY);
+            ctx.lineTo(startX, startY);
+            const grad = ctx.createLinearGradient(0, planeY, 0, startY);
+            grad.addColorStop(0, 'rgba(229, 37, 78, 0.35)');
+            grad.addColorStop(1, 'rgba(229, 37, 78, 0.0)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.restore();
+
+            // Draw Red Aviator Plane
+            drawAviatorPlane(planeX, planeY, Math.atan2((startY - planeY), (planeX - startX)) - 0.15);
+
+            const overlay = document.getElementById('canvas-overlay');
+            overlay.innerHTML = `
+                <div class="text-5xl sm:text-7xl font-black text-white tracking-tight drop-shadow-[0_0_25px_rgba(229,37,78,0.9)] font-mono">
+                    ${mult.toFixed(2)}<span class="text-brand-red text-3xl sm:text-5xl">x</span>
+                </div>
+            `;
+        }
+
+        function renderCanvasCrashed(mult) {
+            resizeCanvas();
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+            drawRadarBackground(w, h);
+
+            ctx.fillStyle = 'rgba(229, 37, 78, 0.12)';
+            ctx.fillRect(0, 0, w, h);
+
+            const overlay = document.getElementById('canvas-overlay');
+            overlay.innerHTML = `
+                <div class="text-xs font-black text-brand-red uppercase tracking-widest bg-brand-red/10 px-3.5 py-1 rounded-full border border-brand-red/30 mb-2">طارت الطائرة! FLEW AWAY</div>
+                <div class="text-5xl sm:text-7xl font-black text-brand-red tracking-tight drop-shadow-[0_0_30px_rgba(229,37,78,0.9)] font-mono">
+                    ${mult.toFixed(2)}x
+                </div>
+            `;
+        }
+
+        function drawRadarBackground(w, h) {
+            ctx.strokeStyle = 'rgba(40, 53, 77, 0.3)';
+            ctx.lineWidth = 1;
+            const gridSize = 40;
+
+            for (let x = 0; x < w; x += gridSize) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+            for (let y = 0; y < h; y += gridSize) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+        }
+
+        function drawAviatorPlane(x, y, angle) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(-angle);
+
+            // Engine Flame
+            ctx.fillStyle = '#fbbf24';
+            ctx.shadowColor = '#f59e0b';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(-22, 0, 5 + Math.random() * 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Plane Body (Red Aviator style)
+            ctx.fillStyle = '#e5254e';
+            ctx.shadowColor = '#e5254e';
+            ctx.shadowBlur = 15;
+            
+            ctx.beginPath();
+            ctx.moveTo(22, 0);
+            ctx.lineTo(-16, -13);
+            ctx.lineTo(-10, 0);
+            ctx.lineTo(-16, 13);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // ==================== BETTING ACTIONS ====================
+        function setBetPreset(val) {
+            const input = document.getElementById('bet-amount-input');
+            let current = parseFloat(input.value) || 0;
+            input.value = (current + val).toFixed(0);
+        }
+
+        function doubleBet() {
+            const input = document.getElementById('bet-amount-input');
+            let current = parseFloat(input.value) || 0;
+            input.value = (current * 2).toFixed(0);
+        }
+
+        function toggleAutoCashout() {
+            const checked = document.getElementById('auto-cashout-toggle').checked;
+            document.getElementById('auto-cashout-input-wrapper').classList.toggle('hidden', !checked);
+        }
+
+        function handleMainAction() {
+            if (gameState === 'WAITING') {
+                placeBet();
+            } else if (gameState === 'FLYING') {
+                if (currentBet > 0 && !hasCashedOut) {
+                    cashOut();
+                }
+            }
+        }
+
+        async function placeBet() {
+            if (!currentUser) return;
+
+            const amountInput = parseFloat(document.getElementById('bet-amount-input').value);
+
+            if (isNaN(amountInput) || amountInput <= 0) {
+                showToast('يرجى إدخال مبلغ رهان صحيح', 'error');
+                return;
+            }
+
+            if (currentUser.balance < amountInput) {
+                showToast('رصيدك غير كافٍ للرهان! اطلب رصيد أو فعّل كود هدية.', 'error');
+                return;
+            }
+
+            try {
+                // Atomic balance deduction in Firebase
+                const newBalance = currentUser.balance - amountInput;
+                await window.FB.set(window.FB.ref(window.FB.db, `users/${currentUser.cleanKey}/balance`), newBalance);
+
+                currentBet = amountInput;
+                hasCashedOut = false;
+
+                showToast(`تم وضع رهان بقيمة ${amountInput.toFixed(2)} EGP!`, 'success');
+
+                document.getElementById('active-bet-status').classList.remove('hidden');
+                document.getElementById('active-bet-val').innerText = currentBet.toFixed(2);
+                
+                updateActionButton();
+            } catch(e) {
+                showToast('فشل وضع الرهان بقاعدة البيانات', 'error');
+            }
+        }
+
+        async function cashOut() {
+            if (currentBet <= 0 || hasCashedOut || gameState !== 'FLYING') return;
+
+            hasCashedOut = true;
+            const wonAmount = currentBet * currentMultiplier;
+
+            try {
+                // Credit winnings in Firebase
+                const newBalance = currentUser.balance + wonAmount;
+                await window.FB.set(window.FB.ref(window.FB.db, `users/${currentUser.cleanKey}/balance`), newBalance);
+
+                playSound('cashout');
+
+                if (window.confetti) {
+                    window.confetti({ particleCount: 60, spread: 70, origin: { y: 0.7 } });
+                }
+
+                showToast(`مبروك! سحبت الأرباح عند ${currentMultiplier.toFixed(2)}x (+${wonAmount.toFixed(2)} EGP)!`, 'success');
+                document.getElementById('active-bet-status').classList.add('hidden');
+                updateActionButton();
+            } catch(e) {
+                showToast('حدث خطأ أثناء حفظ الأرباح', 'error');
+            }
+        }
+
+        function updateBetDisplayDuringFlight() {
+            if (currentBet > 0 && !hasCashedOut && gameState === 'FLYING') {
+                const estWin = currentBet * currentMultiplier;
+                document.getElementById('expected-win-val').innerText = `الربح المتوقع: ${estWin.toFixed(2)} EGP`;
+            }
+        }
+
+        function updateActionButton() {
+            const btn = document.getElementById('main-action-btn');
+            const primary = document.getElementById('btn-text-primary');
+            const secondary = document.getElementById('btn-text-secondary');
+
+            if (gameState === 'WAITING') {
+                if (currentBet > 0) {
+                    btn.className = "w-full py-4 rounded-2xl font-black text-lg transition-all shadow-xl flex flex-col items-center justify-center gap-0.5 bg-amber-500 text-black shadow-amber-500/20";
+                    primary.innerText = "تم وضع الرهان بنجاح";
+                    secondary.innerText = `المبلغ: ${currentBet.toFixed(2)} EGP`;
+                } else {
+                    btn.className = "w-full py-4 rounded-2xl font-black text-lg transition-all shadow-xl flex flex-col items-center justify-center gap-0.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-black shadow-emerald-500/20 active:scale-95";
+                    primary.innerText = "وضع رهان (BET)";
+                    secondary.innerText = "للجولة القادمة";
+                }
+            } else if (gameState === 'FLYING') {
+                if (currentBet > 0 && !hasCashedOut) {
+                    btn.className = "w-full py-4 rounded-2xl font-black text-xl transition-all shadow-xl flex flex-col items-center justify-center gap-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-black shadow-amber-500/30 animate-pulse-glow active:scale-95";
+                    primary.innerText = "سحب الأرباح (CASH OUT)";
+                    secondary.innerText = `${(currentBet * currentMultiplier).toFixed(2)} EGP`;
+                } else {
+                    btn.className = "w-full py-4 rounded-2xl font-black text-lg transition-all shadow-xl flex flex-col items-center justify-center gap-0.5 bg-brand-dark text-slate-500 border border-brand-border cursor-not-allowed opacity-70";
+                    primary.innerText = "الطائرة تطير الآن...";
+                    secondary.innerText = "انتظر الجولة القادمة";
+                }
+            } else if (gameState === 'CRASHED') {
+                btn.className = "w-full py-4 rounded-2xl font-black text-lg transition-all shadow-xl flex flex-col items-center justify-center gap-0.5 bg-brand-red/20 text-brand-red border border-brand-red/30 cursor-not-allowed";
+                primary.innerText = "انفجرت الطائرة!";
+                secondary.innerText = "جاري التحضير للجولة التالية...";
+            }
+        }
+
+        // ==================== HISTORY & LIVE BETS ====================
+        function renderHistoryPills() {
+            const container = document.getElementById('history-pills-container');
+            container.innerHTML = historyMultipliers.map(mult => {
+                let badgeStyle = 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+                if (mult >= 2.00 && mult < 10.00) badgeStyle = 'bg-purple-500/20 text-purple-400 border-purple-500/30';
+                else if (mult >= 10.00) badgeStyle = 'bg-amber-500/20 text-amber-400 border-amber-500/30 font-black';
+
+                return `<span class="px-2.5 py-1 rounded-xl text-xs font-bold border ${badgeStyle} font-mono">${mult.toFixed(2)}x</span>`;
+            }).join('');
+        }
+
+        function renderLiveBetsTable() {
+            const fakePlayers = [
+                { name: 'Ahmed_EGP', bet: 100, cashedAt: 2.15, won: 215.00 },
+                { name: 'Khaled_VIP', bet: 250, cashedAt: 4.50, won: 1125.00 },
+                { name: 'Mostafa_Crash', bet: 50, cashedAt: 1.60, won: 80.00 },
+                { name: 'Youssef_99', bet: 30, cashedAt: 0, won: 0 }
+            ];
+
+            const tbody = document.getElementById('live-bets-tbody');
+            tbody.innerHTML = fakePlayers.map(p => `
+                <tr class="hover:bg-brand-dark/50 transition-all">
+                    <td class="py-2.5 font-bold flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-brand-dark border border-brand-border flex items-center justify-center text-[10px] text-brand-red font-black">
+                            ${p.name.charAt(0)}
+                        </div>
+                        ${p.name}
+                    </td>
+                    <td class="py-2.5 font-mono">${p.bet.toFixed(2)} EGP</td>
+                    <td class="py-2.5 font-mono">
+                        ${p.cashedAt > 0 
+                            ? `<span class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">${p.cashedAt.toFixed(2)}x</span>`
+                            : `<span class="text-slate-500">جارٍ اللعب...</span>`
+                        }
+                    </td>
+                    <td class="py-2.5 font-bold font-mono ${p.won > 0 ? 'text-emerald-400' : 'text-slate-500'}">
+                        ${p.won > 0 ? `+${p.won.toFixed(2)} EGP` : '0.00 EGP'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ==================== GIVEAWAY CODE REDEMPTION ====================
+        async function handleRedeemCode() {
+            if (!currentUser) return;
+
+            const codeInput = document.getElementById('promo-code-input').value.trim().toUpperCase();
+            if (!codeInput) {
+                showToast('يرجى إدخال رمز الكود', 'error');
+                return;
+            }
+
+            try {
+                const dbRef = window.FB.ref(window.FB.db);
+                const codeSnap = await window.FB.get(window.FB.child(dbRef, `giveaways/${codeInput}`));
+
+                if (!codeSnap.exists()) {
+                    showToast('الكود غير صحيح أو غير موجود!', 'error');
+                    return;
+                }
+
+                const codeData = codeSnap.val();
+
+                if (codeData.claims && codeData.claims[currentUser.cleanKey]) {
+                    showToast('لقد قمت بتفعيل هذا الكود من قبل!', 'error');
+                    return;
+                }
+
+                const currentClaimCount = codeData.claimCount || 0;
+                if (currentClaimCount >= codeData.maxClaims) {
+                    showToast('عذراً، الكود وصل للحد الأقصى للاستخدام!', 'error');
+                    return;
+                }
+
+                // Apply giveaway code reward
+                const rewardAmount = parseFloat(codeData.amount);
+                const newBalance = currentUser.balance + rewardAmount;
+
+                const updates = {};
+                updates[`users/${currentUser.cleanKey}/balance`] = newBalance;
+                updates[`giveaways/${codeInput}/claimCount`] = currentClaimCount + 1;
+                updates[`giveaways/${codeInput}/claims/${currentUser.cleanKey}`] = Date.now();
+
+                await window.FB.update(window.FB.ref(window.FB.db), updates);
+
+                closeModal('promo-modal');
+                document.getElementById('promo-code-input').value = '';
+
+                playSound('cashout');
+                showToast(`تم تفعيل الكود بنجاح! تم إضافة ${rewardAmount.toFixed(2)} EGP لرصيدك.`, 'success');
+
+            } catch (err) {
+                console.error("Redeem error", err);
+                showToast('حدث خطأ أثناء تفعيل الكود', 'error');
+            }
+        }
+
+        // ==================== EXCLUSIVE ADMIN PANEL (mahmoud ONLY) ====================
+        function openAdminModal() {
+            if (!currentUser || currentUser.username.toLowerCase() !== 'mahmoud') {
+                showToast('غير مصرح لك بدخول لوحة الأدمن!', 'error');
+                return;
+            }
+            loadAdminGiveawaysList();
+            openModal('admin-modal');
+        }
+
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-amber-500', 'text-black');
+                btn.classList.add('bg-brand-dark', 'text-slate-300');
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId.replace('tab-', '')}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-brand-dark', 'text-slate-300');
+                activeBtn.classList.add('bg-amber-500', 'text-black');
+            }
+        }
+
+        async function adminSendFunds() {
+            const targetUser = document.getElementById('admin-target-user').value.trim();
+            const amount = parseFloat(document.getElementById('admin-send-amount').value);
+
+            if (!targetUser || isNaN(amount) || amount <= 0) {
+                showToast('يرجى كتابة اسم المستخدم ومبلغ صحيح', 'error');
+                return;
+            }
+
+            const cleanKey = targetUser.toLowerCase().replace(/[^a-z0-9_]/g, '');
+
+            try {
+                const dbRef = window.FB.ref(window.FB.db);
+                const userSnap = await window.FB.get(window.FB.child(dbRef, `users/${cleanKey}`));
+
+                let currentBal = 0;
+                if (userSnap.exists()) {
+                    currentBal = parseFloat(userSnap.val().balance || 0);
+                }
+
+                const newBal = currentBal + amount;
+                
+                const updates = {};
+                updates[`users/${cleanKey}/username`] = targetUser;
+                updates[`users/${cleanKey}/cleanKey`] = cleanKey;
+                updates[`users/${cleanKey}/balance`] = newBal;
+
+                await window.FB.update(window.FB.ref(window.FB.db), updates);
+
+                document.getElementById('admin-target-user').value = '';
+                document.getElementById('admin-send-amount').value = '';
+
+                showToast(`تم إرسال ${amount.toFixed(2)} EGP بنجاح إلى (${targetUser})!`, 'success');
+
+            } catch (err) {
+                console.error("Admin send funds error", err);
+                showToast('فشل إرسال الرصيد', 'error');
+            }
+        }
+
+        async function adminCreateCode() {
+            const codeName = document.getElementById('admin-code-name').value.trim().toUpperCase();
+            const val = parseFloat(document.getElementById('admin-code-val').value);
+            const limit = parseInt(document.getElementById('admin-code-limit').value);
+
+            if (!codeName || isNaN(val) || val <= 0 || isNaN(limit) || limit <= 0) {
+                showToast('يرجى إدخال بيانات الكود بشكل صحيح', 'error');
+                return;
+            }
+
+            try {
+                const giveawayData = {
+                    code: codeName,
+                    amount: val,
+                    maxClaims: limit,
+                    claimCount: 0,
+                    createdBy: 'mahmoud',
+                    createdAt: Date.now()
+                };
+
+                await window.FB.set(window.FB.ref(window.FB.db, `giveaways/${codeName}`), giveawayData);
+
+                document.getElementById('admin-code-name').value = '';
+                document.getElementById('admin-code-val').value = '';
+
+                loadAdminGiveawaysList();
+                showToast(`تم إنشاء كود الجيفاواي (${codeName}) بقيمة ${val} EGP!`, 'success');
+
+            } catch (err) {
+                showToast('حدث خطأ أثناء إنشاء الكود', 'error');
+            }
+        }
+
+        async function loadAdminGiveawaysList() {
+            const container = document.getElementById('admin-codes-list');
+            try {
+                const dbRef = window.FB.ref(window.FB.db);
+                const snap = await window.FB.get(window.FB.child(dbRef, 'giveaways'));
+
+                if (!snap.exists()) {
+                    container.innerHTML = `<p class="text-slate-500 italic text-center py-2">لا توجد أكواد جيفاواي حالياً</p>`;
+                    return;
+                }
+
+                const giveaways = snap.val();
+                container.innerHTML = Object.entries(giveaways).map(([codeKey, item]) => `
+                    <div class="bg-brand-dark p-2 rounded-xl border border-brand-border flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-amber-400 font-mono">${codeKey}</span>
+                            <span class="text-emerald-400 font-bold font-mono">+${item.amount} EGP</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] text-slate-400 font-mono">استخدام: ${item.claimCount || 0}/${item.maxClaims}</span>
+                            <button onclick="adminDeleteCode('${codeKey}')" class="text-red-400 hover:text-red-300 text-xs">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch(e) {}
+        }
+
+        async function adminDeleteCode(codeKey) {
+            try {
+                await window.FB.remove(window.FB.ref(window.FB.db, `giveaways/${codeKey}`));
+                loadAdminGiveawaysList();
+                showToast(`تم حذف الكود (${codeKey})`, 'info');
+            } catch(e) {}
+        }
+
+        async function adminPublishBanner() {
+            const text = document.getElementById('admin-banner-text').value.trim();
+            if (!text) {
+                showToast('يرجى كتابة نص الإشعار', 'error');
+                return;
+            }
+
+            try {
+                const broadcastData = {
+                    text: text,
+                    timestamp: new Date().toLocaleTimeString('ar-EG'),
+                    sender: 'mahmoud'
+                };
+
+                await window.FB.set(window.FB.ref(window.FB.db, 'serverBroadcast'), broadcastData);
+                showToast('تم نشر الإشعار 3D أونلاين لجميع اللاعبين بنجاح!', 'success');
+
+            } catch (err) {
+                showToast('حدث خطأ أثناء نشر الإشعار', 'error');
+            }
+        }
+
+        async function adminClearBanner() {
+            try {
+                await window.FB.remove(window.FB.ref(window.FB.db, 'serverBroadcast'));
+                showToast('تم إخفاء الإشعار', 'info');
+            } catch(e) {}
+        }
+
+        function dismissBanner() {
+            document.getElementById('server-3d-banner').classList.add('hidden');
+        }
+
+        // Attach global window handlers
+        window.handleAuthSubmit = handleAuthSubmit;
+        window.handleLogout = handleLogout;
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.handleMainAction = handleMainAction;
+        window.setBetPreset = setBetPreset;
+        window.doubleBet = doubleBet;
+        window.toggleAutoCashout = toggleAutoCashout;
+        window.handleRedeemCode = handleRedeemCode;
+        window.openAdminModal = openAdminModal;
+        window.switchAdminTab = switchAdminTab;
+        window.adminSendFunds = adminSendFunds;
+        window.adminCreateCode = adminCreateCode;
+        window.adminDeleteCode = adminDeleteCode;
+        window.adminPublishBanner = adminPublishBanner;
+        window.adminClearBanner = adminClearBanner;
+        window.dismissBanner = dismissBanner;
+        window.toggleSound = toggleSound;
+    </script>
 </body>
 </html>
